@@ -624,6 +624,138 @@
             color: #999;
         }
         
+        /* INSIGHT DA INTELIGÊNCIA BIOCARDIO */
+        .insight-ia-card {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 2px solid #0ea5e9;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 16px rgba(14, 165, 233, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .insight-ia-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #0ea5e9, #06b6d4, #0ea5e9);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        .insight-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .insight-icon {
+            font-size: 28px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .insight-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #0369a1;
+            margin: 0;
+            flex: 1;
+        }
+        
+        .insight-badge {
+            background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .insight-conteudo {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .insight-loading {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #0369a1;
+            font-size: 15px;
+        }
+        
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid #e0f2fe;
+            border-top-color: #0ea5e9;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .insight-texto {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #0c4a6e;
+            text-align: left;
+            font-weight: 500;
+        }
+        
+        .insight-erro {
+            color: #dc2626;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .insight-metadata {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #bae6fd;
+            font-size: 12px;
+            color: #0369a1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .insight-recorrente {
+            background: #dcfce7;
+            color: #166534;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 11px;
+        }
+        
         /* RESPONSIVO */
         @media (max-width: 768px) {
             .header-content {
@@ -1009,6 +1141,21 @@
                         <button class="btn-action btn-pdf" onclick="exportarProntuarioPDF()" title="Exportar para PDF">
                             📄 Exportar PDF
                         </button>
+                    </div>
+                </div>
+                
+                <!-- INSIGHT DA INTELIGÊNCIA BIOCARDIO -->
+                <div class="insight-ia-card">
+                    <div class="insight-header">
+                        <span class="insight-icon">💡</span>
+                        <h4 class="insight-title">Insight da Inteligência Biocardio</h4>
+                        <span class="insight-badge">IA</span>
+                    </div>
+                    <div id="insight-conteudo" class="insight-conteudo">
+                        <div class="insight-loading">
+                            <div class="spinner"></div>
+                            <span>Analisando dados com IA...</span>
+                        </div>
                     </div>
                 </div>
                 
@@ -1533,6 +1680,69 @@
         }
     }
     
+    // Chamar IA para análise
+    async function analisarComIA(paciente, atendimento, totalVisitas) {
+        const insightConteudo = document.getElementById('insight-conteudo');
+        
+        // Mostrar loading
+        insightConteudo.innerHTML = `
+            <div class="insight-loading">
+                <div class="spinner"></div>
+                <span>Analisando dados com IA...</span>
+            </div>
+        `;
+        
+        try {
+            const response = await fetch('/.netlify/functions/analisar-paciente', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    paciente: {
+                        nome: paciente.nome_paciente,
+                        idade: calcularIdadeAtual(paciente.data_nascimento),
+                        sexo: paciente.sexo,
+                        totalVisitas: totalVisitas
+                    },
+                    atendimento: atendimento,
+                    jornada: {
+                        pacientesRecorrentes: totalVisitas > 1 ? 1 : 0
+                    }
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error('Erro ao obter insight da IA');
+            }
+            
+            const data = await response.json();
+            
+            if (data.success && data.insight) {
+                // Exibir insight
+                const isRecorrente = data.metadata?.pacienteRecorrente;
+                insightConteudo.innerHTML = `
+                    <div class="insight-texto">
+                        ${data.insight}
+                    </div>
+                    <div class="insight-metadata">
+                        <span>🤖 GPT-4o-mini • ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
+                        ${isRecorrente ? '<span class="insight-recorrente">⭐ Paciente Recorrente</span>' : ''}
+                    </div>
+                `;
+            } else {
+                throw new Error('Insight não disponível');
+            }
+        } catch (error) {
+            console.error('Erro ao analisar com IA:', error);
+            insightConteudo.innerHTML = `
+                <div class="insight-erro">
+                    ⚠️ Não foi possível obter o insight da IA no momento.
+                </div>
+            `;
+        }
+    }
+    
     // Exibir jornada do paciente
     function exibirJornadaPaciente(atendimentos) {
         if (atendimentos.length === 0) return;
@@ -1543,6 +1753,9 @@
         document.getElementById('paciente-idade').innerText = calcularIdadeAtual(paciente.data_nascimento);
         document.getElementById('paciente-sexo').innerText = paciente.sexo || 'Não informado';
         document.getElementById('paciente-total-visitas').innerText = `${atendimentos.length} ${atendimentos.length === 1 ? 'visita' : 'visitas'}`;
+        
+        // Chamar IA para análise (atendimento mais recente)
+        analisarComIA(paciente, atendimentos[0], atendimentos.length);
         
         // Timeline de atendimentos
         const timeline = document.getElementById('timeline-atendimentos');
