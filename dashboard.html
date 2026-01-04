@@ -12,6 +12,9 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     
+    <!-- html2pdf.js para exportação PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
@@ -443,6 +446,10 @@
             padding: 30px;
             border-radius: 12px;
             margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 30px;
         }
         
         .paciente-info h3 {
@@ -450,6 +457,43 @@
             font-size: 28px;
             font-weight: 800;
             margin-bottom: 12px;
+        }
+        
+        .paciente-actions {
+            display: flex;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+        
+        .btn-action {
+            padding: 12px 20px;
+            border: 2px solid white;
+            background: transparent;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        
+        .btn-action:hover {
+            background: white;
+            color: #003d7a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255,255,255,0.3);
+        }
+        
+        .btn-print:hover {
+            background: white;
+            color: #003d7a;
+        }
+        
+        .btn-pdf:hover {
+            background: white;
+            color: #c8102e;
         }
         
         .paciente-detalhes {
@@ -634,6 +678,20 @@
                 width: 100%;
             }
             
+            .paciente-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .paciente-actions {
+                width: 100%;
+                flex-direction: column;
+            }
+            
+            .btn-action {
+                width: 100%;
+            }
+            
             .paciente-detalhes {
                 flex-direction: column;
                 gap: 10px;
@@ -641,6 +699,97 @@
             
             .timeline-body {
                 grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        /* IMPRESSÃO DO PRONTUÁRIO */
+        @media print {
+            /* Ocultar tudo exceto prontuário */
+            .header,
+            .page-title,
+            .page-subtitle,
+            .stats-grid,
+            .section:not(.section-prontuario),
+            .search-form,
+            .btn-nav,
+            .btn-search,
+            .btn-clear-search,
+            .btn-action {
+                display: none !important;
+            }
+            
+            /* Mostrar apenas resultado do prontuário */
+            body {
+                background: white;
+                margin: 0;
+                padding: 20px;
+            }
+            
+            .container {
+                max-width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            
+            .section-prontuario {
+                box-shadow: none;
+                border-radius: 0;
+                padding: 0;
+                margin: 0;
+            }
+            
+            .section-title {
+                color: #003d7a;
+                border-bottom: 2px solid #003d7a;
+                padding-bottom: 10px;
+                margin-bottom: 20px;
+            }
+            
+            .paciente-header {
+                background: white !important;
+                color: #003d7a !important;
+                border: 2px solid #003d7a;
+                page-break-inside: avoid;
+            }
+            
+            .paciente-info h3 {
+                color: #003d7a;
+            }
+            
+            .paciente-detalhes span::before {
+                color: #003d7a !important;
+            }
+            
+            .timeline-item {
+                page-break-inside: avoid;
+                border: 1px solid #ddd;
+                margin-bottom: 15px;
+                box-shadow: none;
+            }
+            
+            .timeline-item:hover {
+                transform: none;
+            }
+            
+            /* Cabeçalho de impressão */
+            .paciente-header::before {
+                content: 'Clínica Biocardio - Prontuário de Triagem';
+                display: block;
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 15px;
+                text-align: center;
+                border-bottom: 1px solid #003d7a;
+                padding-bottom: 10px;
+            }
+            
+            /* Data de impressão */
+            .paciente-header::after {
+                content: 'Impresso em: ' attr(data-print-date);
+                display: block;
+                font-size: 11px;
+                margin-top: 10px;
+                opacity: 0.7;
             }
         }
     </style>
@@ -819,7 +968,7 @@
         </div>
         
         <!-- PRONTUÁRIO DE TRIAGEM -->
-        <div class="section">
+        <div class="section section-prontuario">
             <h2 class="section-title">🩺 Prontuário de Triagem</h2>
             <p class="section-subtitle">Consulta do histórico completo do paciente para atendimento médico</p>
             
@@ -852,6 +1001,14 @@
                             <span id="paciente-sexo">--</span>
                             <span id="paciente-total-visitas">--</span>
                         </div>
+                    </div>
+                    <div class="paciente-actions">
+                        <button class="btn-action btn-print" onclick="imprimirProntuario()" title="Imprimir Histórico">
+                            🖨️ Imprimir
+                        </button>
+                        <button class="btn-action btn-pdf" onclick="exportarProntuarioPDF()" title="Exportar para PDF">
+                            📄 Exportar PDF
+                        </button>
                     </div>
                 </div>
                 
@@ -1240,6 +1397,87 @@
         document.getElementById('search-nascimento').value = '';
         document.getElementById('prontuario-resultado').style.display = 'none';
         document.getElementById('prontuario-vazio').style.display = 'none';
+    }
+    
+    // Imprimir prontuário
+    function imprimirProntuario() {
+        // Adicionar data de impressão
+        const header = document.querySelector('.paciente-header');
+        const dataAtual = new Date().toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        header.setAttribute('data-print-date', dataAtual);
+        
+        // Abrir janela de impressão
+        window.print();
+    }
+    
+    // Exportar prontuário para PDF
+    function exportarProntuarioPDF() {
+        const prontuarioResultado = document.getElementById('prontuario-resultado');
+        
+        if (!prontuarioResultado || prontuarioResultado.style.display === 'none') {
+            alert('⚠️ Nenhum prontuário para exportar. Faça uma busca primeiro.');
+            return;
+        }
+        
+        // Nome do paciente para o arquivo
+        const nomePaciente = document.getElementById('paciente-nome').innerText;
+        const nomeArquivo = `Prontuario_${nomePaciente.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+        
+        // Clonar o conteúdo para não afetar a visualização
+        const conteudo = prontuarioResultado.cloneNode(true);
+        
+        // Remover botões de ação do clone
+        const acoes = conteudo.querySelector('.paciente-actions');
+        if (acoes) acoes.remove();
+        
+        // Configurações do PDF
+        const opt = {
+            margin: [10, 10, 10, 10],
+            filename: nomeArquivo,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { 
+                scale: 2,
+                useCORS: true,
+                letterRendering: true
+            },
+            jsPDF: { 
+                unit: 'mm', 
+                format: 'a4', 
+                orientation: 'portrait' 
+            },
+            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+        
+        // Adicionar cabeçalho ao conteúdo
+        const headerDiv = document.createElement('div');
+        headerDiv.style.cssText = 'text-align: center; margin-bottom: 20px; border-bottom: 2px solid #003d7a; padding-bottom: 10px;';
+        headerDiv.innerHTML = `
+            <h2 style="color: #003d7a; font-family: Montserrat, sans-serif; margin: 0 0 5px 0;">
+                CLÍNICA BIOCARDIO
+            </h2>
+            <p style="color: #666; font-size: 14px; margin: 0;">
+                Prontuário de Triagem - ${new Date().toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric'
+                })}
+            </p>
+        `;
+        conteudo.insertBefore(headerDiv, conteudo.firstChild);
+        
+        // Gerar PDF
+        html2pdf().set(opt).from(conteudo).save().then(() => {
+            console.log('PDF gerado com sucesso!');
+        }).catch(err => {
+            console.error('Erro ao gerar PDF:', err);
+            alert('❌ Erro ao gerar PDF. Tente novamente.');
+        });
     }
     
     // Pesquisar jornada do paciente
