@@ -20,6 +20,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     
+    <!-- Force Tabs - Solução para Cache -->
+    <script src="force-tabs.js"></script>
+    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -1476,9 +1479,9 @@
         <div style="text-align: center; margin: 30px 0; padding: 30px; background: linear-gradient(135deg, #8b5cf6, #6366f1); border-radius: 20px; box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);">
             <h2 style="color: white; font-size: 28px; margin-bottom: 15px; font-family: 'Montserrat', sans-serif;">🧠 Acesse a Central de Inteligência IA</h2>
             <p style="color: rgba(255,255,255,0.9); margin-bottom: 25px; font-size: 16px;">Oracle IA • Insights Proativos • Diamond Club • Tendências</p>
-            <a href="central-ia.html" style="display: inline-block; padding: 18px 50px; background: white; color: #8b5cf6; font-size: 20px; font-weight: 700; border-radius: 12px; text-decoration: none; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-family: 'Montserrat', sans-serif;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)'">
+            <button onclick="abrirCentralIA()" style="display: inline-block; padding: 18px 50px; background: white; color: #8b5cf6; font-size: 20px; font-weight: 700; border-radius: 12px; border: none; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-family: 'Montserrat', sans-serif;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)'">
                 🚀 ABRIR CENTRAL IA
-            </a>
+            </button>
         </div>
         
         <div id="loading" class="loading">Carregando inteligência de dados</div>
@@ -2677,6 +2680,13 @@
     
     // FUNÇÃO PARA IR DIRETO PARA CENTRAL IA (BOTÃO NO HEADER)
     function irParaCentralIA() {
+        abrirCentralIA();
+    }
+    
+    // FUNÇÃO PRINCIPAL PARA ABRIR CENTRAL IA
+    function abrirCentralIA() {
+        console.log('🚀 Abrindo Central IA...');
+        
         // Scroll para o topo
         window.scrollTo({ top: 0, behavior: 'smooth' });
         
@@ -2687,13 +2697,24 @@
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
             
             // Ativar tab da Central IA
-            const tabIA = document.querySelectorAll('.tab')[1]; // Segunda tab
-            if (tabIA) tabIA.classList.add('active');
+            const tabs = document.querySelectorAll('.tab');
+            if (tabs.length > 1) {
+                tabs[1].classList.add('active'); // Segunda tab
+            }
             
             const contentIA = document.getElementById('central-ia');
             if (contentIA) {
                 contentIA.classList.add('active');
-                carregarCentralIA();
+                contentIA.style.display = 'block';
+                
+                // Carregar dados da Central IA
+                if (typeof carregarCentralIA === 'function') {
+                    carregarCentralIA();
+                }
+                
+                console.log('✅ Central IA ativada!');
+            } else {
+                console.error('❌ Elemento central-ia não encontrado');
             }
         }, 300);
     }
