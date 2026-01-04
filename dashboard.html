@@ -571,6 +571,9 @@
         .badge-cardio { background: #e3f2fd; color: #1565c0; }
         .badge-endo { background: #f3e5f5; color: #7b1fa2; }
         .badge-vascular { background: #fff3e0; color: #e65100; }
+        .badge-eco { background: #e0f2f1; color: #00695c; }
+        .badge-exames { background: #e8eaf6; color: #283593; }
+        .badge-ultrassom { background: #fce4ec; color: #c2185b; }
         
         .timeline-body {
             display: grid;
@@ -1040,6 +1043,51 @@
                             <div class="production-label">atendimentos</div>
                         </td>
                     </tr>
+                    <tr>
+                        <td>Ecocardiograma</td>
+                        <td>
+                            <div class="production-value" id="eco-hoje">0</div>
+                            <div class="production-label">atendimentos</div>
+                        </td>
+                        <td>
+                            <div class="production-value" id="eco-semana">0</div>
+                            <div class="production-label">atendimentos</div>
+                        </td>
+                        <td>
+                            <div class="production-value" id="eco-mes">0</div>
+                            <div class="production-label">atendimentos</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Exames Cardiológicos</td>
+                        <td>
+                            <div class="production-value" id="exames-hoje">0</div>
+                            <div class="production-label">atendimentos</div>
+                        </td>
+                        <td>
+                            <div class="production-value" id="exames-semana">0</div>
+                            <div class="production-label">atendimentos</div>
+                        </td>
+                        <td>
+                            <div class="production-value" id="exames-mes">0</div>
+                            <div class="production-label">atendimentos</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Ultrassom</td>
+                        <td>
+                            <div class="production-value" id="ultrassom-hoje">0</div>
+                            <div class="production-label">atendimentos</div>
+                        </td>
+                        <td>
+                            <div class="production-value" id="ultrassom-semana">0</div>
+                            <div class="production-label">atendimentos</div>
+                        </td>
+                        <td>
+                            <div class="production-value" id="ultrassom-mes">0</div>
+                            <div class="production-label">atendimentos</div>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -1264,7 +1312,10 @@
             const production = {
                 'Cardiologia': { hoje: 0, semana: 0, mes: 0 },
                 'Endocrinologia': { hoje: 0, semana: 0, mes: 0 },
-                'Cirurgia Vascular': { hoje: 0, semana: 0, mes: 0 }
+                'Cirurgia Vascular': { hoje: 0, semana: 0, mes: 0 },
+                'Ecocardiograma': { hoje: 0, semana: 0, mes: 0 },
+                'Exames Cardiológicos': { hoje: 0, semana: 0, mes: 0 },
+                'Ultrassom': { hoje: 0, semana: 0, mes: 0 }
             };
             
             allData.forEach(item => {
@@ -1305,6 +1356,18 @@
             document.getElementById('vascular-hoje').innerText = production['Cirurgia Vascular'].hoje;
             document.getElementById('vascular-semana').innerText = production['Cirurgia Vascular'].semana;
             document.getElementById('vascular-mes').innerText = production['Cirurgia Vascular'].mes;
+            
+            document.getElementById('eco-hoje').innerText = production['Ecocardiograma'].hoje;
+            document.getElementById('eco-semana').innerText = production['Ecocardiograma'].semana;
+            document.getElementById('eco-mes').innerText = production['Ecocardiograma'].mes;
+            
+            document.getElementById('exames-hoje').innerText = production['Exames Cardiológicos'].hoje;
+            document.getElementById('exames-semana').innerText = production['Exames Cardiológicos'].semana;
+            document.getElementById('exames-mes').innerText = production['Exames Cardiológicos'].mes;
+            
+            document.getElementById('ultrassom-hoje').innerText = production['Ultrassom'].hoje;
+            document.getElementById('ultrassom-semana').innerText = production['Ultrassom'].semana;
+            document.getElementById('ultrassom-mes').innerText = production['Ultrassom'].mes;
             
             // ===============================================
             // 2. INTELIGÊNCIA: JORNADA DO PACIENTE
@@ -1769,6 +1832,9 @@
             let badgeClass = 'badge-cardio';
             if (atendimento.especialidade === 'Endocrinologia') badgeClass = 'badge-endo';
             if (atendimento.especialidade === 'Cirurgia Vascular') badgeClass = 'badge-vascular';
+            if (atendimento.especialidade === 'Ecocardiograma') badgeClass = 'badge-eco';
+            if (atendimento.especialidade === 'Exames Cardiológicos') badgeClass = 'badge-exames';
+            if (atendimento.especialidade === 'Ultrassom') badgeClass = 'badge-ultrassom';
             
             // Formatar data
             const dataTriagem = atendimento.data_triagem 
