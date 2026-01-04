@@ -3065,8 +3065,152 @@
     
     // Carregar dados ao abrir a página
     window.onload = function() {
+        // Injetar tabs se não existirem (solução para cache do Netlify)
+        injetarTabsSeNecessario();
         carregarDados();
     };
+    
+    // INJETAR TABS DINAMICAMENTE (SOLUÇÃO PARA CACHE)
+    function injetarTabsSeNecessario() {
+        // Verificar se tabs já existem
+        if (document.querySelector('.tabs-container')) {
+            console.log('✅ Tabs já existem');
+            return;
+        }
+        
+        console.log('🔧 Injetando tabs dinamicamente...');
+        
+        // Criar HTML das tabs
+        const tabsHTML = `
+            <div class="tabs-container">
+                <ul class="tabs">
+                    <li class="tab active" onclick="switchTab('dashboard-executivo')">
+                        <span class="tab-icon">📊</span> Dashboard Executivo
+                    </li>
+                    <li class="tab" onclick="switchTab('central-ia')">
+                        <span class="tab-icon">🧠</span> Central de Inteligência IA
+                    </li>
+                </ul>
+            </div>
+        `;
+        
+        // Inserir tabs após o header
+        const header = document.querySelector('.header');
+        if (header) {
+            header.insertAdjacentHTML('afterend', tabsHTML);
+        }
+        
+        // Envolver conteúdo existente em tab-content
+        const container = document.querySelector('.container');
+        if (container) {
+            const dashboardExecutivo = document.createElement('div');
+            dashboardExecutivo.id = 'dashboard-executivo';
+            dashboardExecutivo.className = 'tab-content active';
+            
+            // Mover todo o conteúdo atual para dentro da tab
+            while (container.firstChild) {
+                dashboardExecutivo.appendChild(container.firstChild);
+            }
+            
+            container.appendChild(dashboardExecutivo);
+            
+            // Criar conteúdo da Central IA
+            const centralIA = document.createElement('div');
+            centralIA.id = 'central-ia';
+            centralIA.className = 'tab-content';
+            centralIA.innerHTML = `
+                <div class="central-ia-container">
+                    <h1 class="page-title">🧠 Biocardio Intelligence Hub</h1>
+                    <p class="page-subtitle">Gestão Estratégica e Clínica de Precisão</p>
+                    
+                    <div id="loading-ia" class="loading">🔮 Analisando histórico de exames...</div>
+                    
+                    <div id="central-ia-content" style="display: none;">
+                        
+                        <!-- CHAT INTERATIVO (ORACLE IA) -->
+                        <div class="oracle-section">
+                            <h2 class="oracle-title">💬 Oracle IA - Consulta Inteligente</h2>
+                            <p class="oracle-subtitle">Faça perguntas sobre seus dados e receba insights estratégicos</p>
+                            
+                            <div class="oracle-chat">
+                                <div class="chat-messages" id="chat-messages">
+                                    <div class="chat-welcome">
+                                        <div class="welcome-icon">🔮</div>
+                                        <h3>Bem-vindo à Central de Inteligência Biocardio</h3>
+                                        <p>Pergunte qualquer coisa sobre seus pacientes:</p>
+                                        <ul class="example-questions">
+                                            <li>"Quem são os hipertensos que não fazem Eco há 6 meses?"</li>
+                                            <li>"Qual a média de PA dos pacientes de Cardiologia?"</li>
+                                            <li>"Quais pacientes precisam de retorno urgente?"</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <div class="chat-input-container">
+                                    <input type="text" id="chat-input" placeholder="Digite sua pergunta sobre os dados..." class="chat-input">
+                                    <button onclick="enviarPerguntaIA()" class="btn-send-chat">🚀 Enviar</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- GRID DE INSIGHTS PROATIVOS -->
+                        <div class="insights-grid">
+                            <div class="insight-card insight-card-eco">
+                                <div class="insight-card-header">
+                                    <div class="insight-card-icon">✨</div>
+                                    <h3>Oportunidades de Ecocardiograma</h3>
+                                </div>
+                                <div class="insight-card-body" id="card-eco-oportunidades">
+                                    <div class="loading-small">Calculando oportunidades...</div>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-card insight-card-multi">
+                                <div class="insight-card-header">
+                                    <div class="insight-card-icon">🔀</div>
+                                    <h3>Sinergia Multidisciplinar</h3>
+                                </div>
+                                <div class="insight-card-body" id="card-sinergia">
+                                    <div class="loading-small">Calculando sinergia...</div>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-card insight-card-risco">
+                                <div class="insight-card-header">
+                                    <div class="insight-card-icon">⚠️</div>
+                                    <h3>Alerta de Risco Clínico</h3>
+                                </div>
+                                <div class="insight-card-body" id="card-risco">
+                                    <div class="loading-small">Identificando riscos...</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- DIAMOND CLUB -->
+                        <div class="diamond-club-section">
+                            <h2 class="diamond-title">💎 Diamond Club - Pacientes VIP</h2>
+                            <p class="diamond-subtitle">Identificação automática de pacientes fiéis e multidisciplinares</p>
+                            <div id="diamond-club-list" class="diamond-list"></div>
+                        </div>
+                        
+                        <!-- DELTA VITALS -->
+                        <div class="delta-vitals-section">
+                            <h2 class="delta-title">📈 Delta Vitals - Tendências Clínicas</h2>
+                            <p class="delta-subtitle">Relatório automático de melhoria ou piora dos pacientes da clínica</p>
+                            <div id="delta-vitals-chart-container">
+                                <canvas id="delta-vitals-chart"></canvas>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(centralIA);
+        }
+        
+        console.log('✅ Tabs injetadas com sucesso!');
+    }
 </script>
 
 </body>
