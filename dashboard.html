@@ -808,6 +808,58 @@
             font-size: 11px;
         }
         
+        .insight-eco-ok {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #065f46;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 11px;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+        }
+        
+        .insight-eco-pendente {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: #92400e;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 11px;
+            animation: pulse-warning 2s infinite;
+        }
+        
+        @keyframes pulse-warning {
+            0%, 100% { box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3); }
+            50% { box-shadow: 0 4px 16px rgba(245, 158, 11, 0.6); }
+        }
+        
+        .insight-conversao {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            color: #1e40af;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 11px;
+        }
+        
+        .insight-variacao {
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 11px;
+        }
+        
+        .insight-variacao.alerta {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #991b1b;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+        }
+        
+        .insight-variacao.positivo {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #065f46;
+        }
+        
         /* RESPONSIVO */
         @media (max-width: 768px) {
             .header-content {
@@ -1037,6 +1089,27 @@
         <div class="section">
             <h2 class="section-title">📋 Matriz de Produção por Especialidade</h2>
             <p class="section-subtitle">Hard Data: Contagens absolutas de atendimentos por especialidade médica</p>
+            
+            <!-- Mini-Sumário de Conversão -->
+            <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+                <div style="background: linear-gradient(135deg, #dbeafe, #bfdbfe); padding: 15px 20px; border-radius: 12px; flex: 1; min-width: 200px;">
+                    <div style="font-size: 12px; color: #1e40af; font-weight: 600; margin-bottom: 5px;">📋 CONSULTAS</div>
+                    <div style="font-size: 28px; font-weight: 700; color: #1e3a8a;" id="total-consultas">0</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #e9d5ff, #f3e8ff); padding: 15px 20px; border-radius: 12px; flex: 1; min-width: 200px;">
+                    <div style="font-size: 12px; color: #6b21a8; font-weight: 600; margin-bottom: 5px;">🔬 EXAMES</div>
+                    <div style="font-size: 28px; font-weight: 700; color: #6b21a8;" id="total-exames">0</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #d1fae5, #a7f3d0); padding: 15px 20px; border-radius: 12px; flex: 1; min-width: 200px;">
+                    <div style="font-size: 12px; color: #065f46; font-weight: 600; margin-bottom: 5px;">✨ ECOCARDIOGRAMAS</div>
+                    <div style="font-size: 28px; font-weight: 700; color: #065f46;" id="total-ecocardiogramas">0</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); padding: 15px 20px; border-radius: 12px; flex: 1; min-width: 200px;">
+                    <div style="font-size: 12px; color: #92400e; font-weight: 600; margin-bottom: 5px;">🎯 TAXA DE CONVERSÃO</div>
+                    <div style="font-size: 28px; font-weight: 700; color: #92400e;" id="taxa-conversao">0%</div>
+                </div>
+            </div>
+            
             <table class="production-table">
                 <thead>
                     <tr>
@@ -1341,10 +1414,10 @@
             const inicioMes = getStartOfMonth();
             const inicioAno = new Date().getFullYear() + '-01-01';
             
-            // Buscar todos os dados
+            // Buscar todos os dados (incluindo tipo_atendimento para análise de conversão)
             const { data: allData, error: allError } = await supabaseClient
                 .from('triagens')
-                .select('nome_paciente, especialidade, data_triagem, criado_em')
+                .select('nome_paciente, especialidade, tipo_atendimento, data_triagem, criado_em')
                 .order('criado_em', { ascending: true });
             
             if (allError) throw allError;
@@ -1367,9 +1440,15 @@
                 'Ultrassom': { hoje: 0, semana: 0, mes: 0 }
             };
             
+            // Contadores por tipo de atendimento (para análise de conversão)
+            let totalConsultas = 0;
+            let totalExames = 0;
+            let totalEcocardiogramas = 0;
+            
             allData.forEach(item => {
                 const dataTriagem = item.data_triagem;
                 const especialidade = item.especialidade;
+                const tipoAtendimento = item.tipo_atendimento;
                 
                 if (!dataTriagem) return;
                 
@@ -1384,6 +1463,26 @@
                     if (dataTriagem === hoje) production[especialidade].hoje++;
                     if (dataTriagem >= inicioSemana) production[especialidade].semana++;
                     if (dataTriagem >= inicioMes) production[especialidade].mes++;
+                }
+                
+                // Análise de conversão (Consultas vs Exames)
+                if (tipoAtendimento) {
+                    const tipo = tipoAtendimento.toLowerCase();
+                    if (tipo.includes('consulta') && !tipo.includes('+')) {
+                        totalConsultas++;
+                    } else if (tipo.includes('exame') || tipo.includes('ecocardiograma')) {
+                        totalExames++;
+                        if (tipo.includes('ecocardiograma')) {
+                            totalEcocardiogramas++;
+                        }
+                    } else if (tipo.includes('+')) {
+                        // Combos contam como consulta + exame
+                        totalConsultas++;
+                        totalExames++;
+                        if (tipo.includes('ecocardiograma')) {
+                            totalEcocardiogramas++;
+                        }
+                    }
                 }
             });
             
@@ -1417,6 +1516,15 @@
             document.getElementById('ultrassom-hoje').innerText = production['Ultrassom'].hoje;
             document.getElementById('ultrassom-semana').innerText = production['Ultrassom'].semana;
             document.getElementById('ultrassom-mes').innerText = production['Ultrassom'].mes;
+            
+            // Atualizar cards de conversão (Consultas vs Exames)
+            document.getElementById('total-consultas').innerText = totalConsultas;
+            document.getElementById('total-exames').innerText = totalExames;
+            document.getElementById('total-ecocardiogramas').innerText = totalEcocardiogramas;
+            
+            // Calcular taxa de conversão (Exames / Consultas)
+            const taxaConversao = totalConsultas > 0 ? ((totalExames / totalConsultas) * 100).toFixed(1) : 0;
+            document.getElementById('taxa-conversao').innerText = taxaConversao + '%';
             
             // ===============================================
             // 2. INTELIGÊNCIA: JORNADA DO PACIENTE
@@ -1831,13 +1939,18 @@
             const data = await response.json();
             
             if (data.success && data.insight) {
-                // Exibir insight com metadados completos
+                // Exibir insight com metadados completos de cruzamento
                 const metadata = data.metadata;
                 const totalVisitas = metadata?.totalVisitas || 1;
+                const totalConsultas = metadata?.totalConsultas || 0;
+                const totalExames = metadata?.totalExames || 0;
+                const fezEcocardiograma = metadata?.fezEcocardiograma || false;
                 const isPrimeiraVisita = metadata?.isPrimeiraVisita || false;
                 const isRecorrente = metadata?.pacienteRecorrente || false;
+                const isMultiEspecialidade = metadata?.isMultiEspecialidade || false;
                 const especialidades = metadata?.especialidadesVisitadas || [];
                 const diasDesdeUltima = metadata?.diasDesdeUltimaVisita;
+                const variacaoPA = metadata?.variacaoPA;
                 
                 // Badge de contador
                 let badgeContador = '';
@@ -1851,7 +1964,7 @@
                 let badgeFidelidade = '';
                 if (isRecorrente) {
                     if (diasDesdeUltima !== null && diasDesdeUltima <= 30) {
-                        badgeFidelidade = '<span class="insight-recorrente fiel">⭐ Paciente Fiel</span>';
+                        badgeFidelidade = '<span class="insight-recorrente fiel">💎 Paciente Diamante</span>';
                     } else if (diasDesdeUltima !== null && diasDesdeUltima > 180) {
                         badgeFidelidade = '<span class="insight-recorrente afastado">⏰ Retornou</span>';
                     } else {
@@ -1859,10 +1972,38 @@
                     }
                 }
                 
-                // Badge multidisciplinar
+                // Badge Multi-Especialidade
                 let badgeMulti = '';
-                if (especialidades.length > 1) {
-                    badgeMulti = `<span class="insight-multi">🔀 ${especialidades.length} Especialidades</span>`;
+                if (isMultiEspecialidade) {
+                    badgeMulti = `<span class="insight-multi">🔀 Multi-Especialidade (${especialidades.length})</span>`;
+                }
+                
+                // Badge Ecocardiograma
+                let badgeEco = '';
+                if (fezEcocardiograma) {
+                    badgeEco = '<span class="insight-eco-ok">✅ Ecocardiograma OK</span>';
+                } else {
+                    // Verificar se é paciente de cardiologia sem eco
+                    const isCardio = especialidades.includes('Cardiologia');
+                    if (isCardio && !isPrimeiraVisita) {
+                        badgeEco = '<span class="insight-eco-pendente">⚠️ Pendente de Exame</span>';
+                    }
+                }
+                
+                // Badge de Conversão (Consultas vs Exames)
+                let badgeConversao = '';
+                if (!isPrimeiraVisita && totalConsultas > 0 && totalExames === 0) {
+                    badgeConversao = '<span class="insight-conversao">🎯 Oportunidade de Exame</span>';
+                }
+                
+                // Badge de Variação PA
+                let badgeVariacaoPA = '';
+                if (variacaoPA !== null && variacaoPA !== 0) {
+                    if (Math.abs(variacaoPA) >= 10) {
+                        const icone = variacaoPA > 0 ? '📈' : '📉';
+                        const classe = variacaoPA > 0 ? 'alerta' : 'positivo';
+                        badgeVariacaoPA = `<span class="insight-variacao ${classe}">${icone} PA ${variacaoPA > 0 ? '+' : ''}${variacaoPA}%</span>`;
+                    }
                 }
                 
                 insightConteudo.innerHTML = `
@@ -1877,6 +2018,9 @@
                             ${badgeContador}
                             ${badgeFidelidade}
                             ${badgeMulti}
+                            ${badgeEco}
+                            ${badgeConversao}
+                            ${badgeVariacaoPA}
                         </div>
                     </div>
                 `;
