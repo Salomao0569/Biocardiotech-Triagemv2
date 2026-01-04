@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Clínica Biocardio</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        /* CABEÇALHO */
+        .header {
+            background: linear-gradient(135deg, #003d7a 0%, #002850 100%);
+            color: white;
+            padding: 30px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .logo {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 28px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .clinica { color: #fff; }
+        .biocardio { color: #c8102e; }
+        
+        .header-nav {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn-nav {
+            padding: 12px 24px;
+            border: 2px solid white;
+            background: transparent;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-nav:hover {
+            background: white;
+            color: #003d7a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255,255,255,0.3);
+        }
+        
+        /* CONTAINER PRINCIPAL */
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        
+        .page-title {
+            font-family: 'Montserrat', sans-serif;
+            color: #003d7a;
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* CARDS DE ESTATÍSTICAS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-left: 5px solid;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+        }
+        
+        .stat-card.blue { border-left-color: #003d7a; }
+        .stat-card.red { border-left-color: #c8102e; }
+        .stat-card.green { border-left-color: #28a745; }
+        .stat-card.orange { border-left-color: #fd7e14; }
+        
+        .stat-card-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-card-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .stat-card-value {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 48px;
+            font-weight: 800;
+            color: #003d7a;
+            line-height: 1;
+        }
+        
+        .stat-card-subtitle {
+            font-size: 12px;
+            color: #999;
+            margin-top: 8px;
+        }
+        
+        /* GRÁFICOS */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+        
+        .chart-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #003d7a;
+            margin-bottom: 20px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+        }
+        
+        /* INDICADOR DE PA MÉDIA */
+        .pa-indicator {
+            background: linear-gradient(135deg, #003d7a 0%, #002850 100%);
+            color: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .pa-indicator-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .pa-indicator-value {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 64px;
+            font-weight: 800;
+            color: #c8102e;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+        
+        .pa-indicator-label {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        /* LOADING */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            font-size: 18px;
+            color: #666;
+        }
+        
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+        
+        /* RESPONSIVO */
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .header-nav {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn-nav {
+                width: 100%;
+            }
+            
+            .page-title {
+                font-size: 24px;
+            }
+            
+            .stat-card-value {
+                font-size: 36px;
+            }
+            
+            .pa-indicator-value {
+                font-size: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="header-content">
+        <div class="logo">
+            <span class="clinica">CLÍNICA</span> <span class="biocardio">Biocardio</span>
+        </div>
+        <div class="header-nav">
+            <a href="index.html" class="btn-nav">📋 Nova Triagem</a>
+            <button class="btn-nav" onclick="carregarDados()">🔄 Atualizar</button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <h1 class="page-title">📊 Dashboard de Triagens</h1>
+    
+    <div id="loading" class="loading">Carregando dados</div>
+    
+    <div id="dashboard" style="display: none;">
+        <!-- CARDS DE ESTATÍSTICAS -->
+        <div class="stats-grid">
+            <div class="stat-card blue">
+                <div class="stat-card-icon">📅</div>
+                <div class="stat-card-title">Atendimentos Hoje</div>
+                <div class="stat-card-value" id="stat-hoje">0</div>
+                <div class="stat-card-subtitle">Triagens realizadas hoje</div>
+            </div>
+            
+            <div class="stat-card red">
+                <div class="stat-card-icon">📆</div>
+                <div class="stat-card-title">Atendimentos Este Mês</div>
+                <div class="stat-card-value" id="stat-mes">0</div>
+                <div class="stat-card-subtitle">Triagens no mês atual</div>
+            </div>
+            
+            <div class="stat-card green">
+                <div class="stat-card-icon">📊</div>
+                <div class="stat-card-title">Atendimentos Este Ano</div>
+                <div class="stat-card-value" id="stat-ano">0</div>
+                <div class="stat-card-subtitle">Triagens no ano atual</div>
+            </div>
+            
+            <div class="stat-card orange">
+                <div class="stat-card-icon">👥</div>
+                <div class="stat-card-title">Total de Pacientes</div>
+                <div class="stat-card-value" id="stat-pacientes">0</div>
+                <div class="stat-card-subtitle">Pacientes únicos</div>
+            </div>
+        </div>
+        
+        <!-- GRÁFICOS -->
+        <div class="charts-grid">
+            <!-- Gráfico de Pizza: Especialidades -->
+            <div class="chart-container">
+                <h3 class="chart-title">🏥 Atendimentos por Especialidade</h3>
+                <div class="chart-wrapper">
+                    <canvas id="chartEspecialidade"></canvas>
+                </div>
+            </div>
+            
+            <!-- Gráfico de Barras: Faixa Etária e Sexo -->
+            <div class="chart-container">
+                <h3 class="chart-title">👥 Distribuição por Faixa Etária e Sexo</h3>
+                <div class="chart-wrapper">
+                    <canvas id="chartFaixaEtaria"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Indicador de PA Média -->
+        <div class="pa-indicator">
+            <div class="pa-indicator-title">💓 Pressão Arterial Média</div>
+            <div class="pa-indicator-value" id="pa-media">--/--</div>
+            <div class="pa-indicator-label">mmHg (Sistólica/Diastólica)</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Variáveis globais
+    let supabaseClient = null;
+    let chartEspecialidade = null;
+    let chartFaixaEtaria = null;
+    
+    // Inicializar Supabase
+    function inicializarSupabase() {
+        if (typeof supabase === 'undefined') {
+            alert('❌ Supabase SDK não carregado!');
+            return false;
+        }
+        
+        if (!SUPABASE_CONFIG || !SUPABASE_CONFIG.url || !SUPABASE_CONFIG.anonKey) {
+            alert('❌ Configure o arquivo supabase-config.js!');
+            return false;
+        }
+        
+        if (SUPABASE_CONFIG.url === 'SUA_URL_DO_SUPABASE_AQUI') {
+            alert('⚠️ Configure as credenciais do Supabase!');
+            return false;
+        }
+        
+        try {
+            supabaseClient = supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+            return true;
+        } catch (error) {
+            console.error('Erro ao inicializar Supabase:', error);
+            return false;
+        }
+    }
+    
+    // Carregar dados do dashboard
+    async function carregarDados() {
+        if (!supabaseClient && !inicializarSupabase()) {
+            return;
+        }
+        
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('dashboard').style.display = 'none';
+        
+        try {
+            // Buscar estatísticas gerais
+            const { data: stats, error: statsError } = await supabaseClient
+                .from('estatisticas_triagens')
+                .select('*')
+                .single();
+            
+            if (statsError) throw statsError;
+            
+            // Atualizar cards de estatísticas
+            document.getElementById('stat-hoje').innerText = stats.triagens_hoje || 0;
+            document.getElementById('stat-mes').innerText = stats.triagens_mes || 0;
+            document.getElementById('stat-ano').innerText = stats.triagens_ano || 0;
+            document.getElementById('stat-pacientes').innerText = stats.total_pacientes || 0;
+            
+            // Atualizar PA média
+            const paSis = stats.pa_sistolica_media || '--';
+            const paDia = stats.pa_diastolica_media || '--';
+            document.getElementById('pa-media').innerText = `${paSis}/${paDia}`;
+            
+            // Buscar dados para gráfico de especialidade
+            const { data: especialidades, error: espError } = await supabaseClient
+                .from('triagens')
+                .select('especialidade');
+            
+            if (espError) throw espError;
+            
+            // Contar especialidades
+            const countEsp = {
+                'Cardiologia': 0,
+                'Endocrinologia': 0
+            };
+            
+            especialidades.forEach(item => {
+                if (item.especialidade && countEsp.hasOwnProperty(item.especialidade)) {
+                    countEsp[item.especialidade]++;
+                }
+            });
+            
+            // Criar gráfico de pizza
+            criarGraficoPizza(countEsp);
+            
+            // Buscar dados de faixa etária
+            const { data: faixasEtarias, error: faixaError } = await supabaseClient
+                .from('distribuicao_faixa_etaria')
+                .select('*');
+            
+            if (faixaError) throw faixaError;
+            
+            // Criar gráfico de barras
+            criarGraficoBarras(faixasEtarias);
+            
+            // Mostrar dashboard
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            
+        } catch (error) {
+            console.error('Erro ao carregar dados:', error);
+            document.getElementById('loading').innerHTML = '❌ Erro ao carregar dados: ' + error.message;
+        }
+    }
+    
+    // Criar gráfico de pizza (Especialidades)
+    function criarGraficoPizza(dados) {
+        const ctx = document.getElementById('chartEspecialidade');
+        
+        // Destruir gráfico anterior se existir
+        if (chartEspecialidade) {
+            chartEspecialidade.destroy();
+        }
+        
+        chartEspecialidade = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Cardiologia', 'Endocrinologia'],
+                datasets: [{
+                    data: [dados.Cardiologia, dados.Endocrinologia],
+                    backgroundColor: ['#003d7a', '#c8102e'],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: {
+                                family: 'Montserrat',
+                                size: 14,
+                                weight: '600'
+                            },
+                            padding: 20
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // Criar gráfico de barras (Faixa Etária e Sexo)
+    function criarGraficoBarras(dados) {
+        const ctx = document.getElementById('chartFaixaEtaria');
+        
+        // Destruir gráfico anterior se existir
+        if (chartFaixaEtaria) {
+            chartFaixaEtaria.destroy();
+        }
+        
+        // Organizar dados por faixa etária e sexo
+        const faixas = ['0-17 anos', '18-29 anos', '30-39 anos', '40-49 anos', '50-59 anos', '60+ anos'];
+        const masculino = new Array(faixas.length).fill(0);
+        const feminino = new Array(faixas.length).fill(0);
+        
+        dados.forEach(item => {
+            const index = faixas.indexOf(item.faixa_etaria);
+            if (index !== -1) {
+                if (item.sexo === 'Masculino') {
+                    masculino[index] = item.total;
+                } else if (item.sexo === 'Feminino') {
+                    feminino[index] = item.total;
+                }
+            }
+        });
+        
+        chartFaixaEtaria = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: faixas,
+                datasets: [
+                    {
+                        label: 'Masculino',
+                        data: masculino,
+                        backgroundColor: '#003d7a',
+                        borderRadius: 6
+                    },
+                    {
+                        label: 'Feminino',
+                        data: feminino,
+                        backgroundColor: '#c8102e',
+                        borderRadius: 6
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        stacked: false,
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                family: 'Montserrat',
+                                size: 11
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            font: {
+                                family: 'Montserrat',
+                                size: 12
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(0,0,0,0.05)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: {
+                                family: 'Montserrat',
+                                size: 14,
+                                weight: '600'
+                            },
+                            padding: 20,
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // Carregar dados ao abrir a página
+    window.onload = function() {
+        carregarDados();
+    };
+</script>
+
+</body>
+</html>
+

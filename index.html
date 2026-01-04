@@ -97,7 +97,7 @@
             letter-spacing: 0.5px;
         }
 
-        input {
+        input, select {
             width: 100%; padding: 14px; 
             border: 2px solid #dde2e6; border-radius: 8px;
             font-size: 16px; 
@@ -106,7 +106,15 @@
             background-color: #fff;
             appearance: none;
         }
-        input:focus { outline: none; border-color: #c8102e; background-color: #fffbfc; }
+        input:focus, select:focus { outline: none; border-color: #c8102e; background-color: #fffbfc; }
+        
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23003d7a' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 35px;
+            cursor: pointer;
+        }
         
         /* Campo Readonly (Idade) */
         input[readonly] {
@@ -545,6 +553,9 @@
             
             /* ESCONDER BOTÕES */
             .buttons { display: none !important; }
+            
+            /* ESCONDER CAMPOS DE CONTROLE INTERNO NA IMPRESSÃO */
+            .controle-interno { display: none !important; }
         }
     </style>
 </head>
@@ -557,6 +568,28 @@
         </div>
         <div class="subtitle">Cardiologia e Medicina Diagnóstica</div>
         <div class="page-title">Ficha de Triagem</div>
+    </div>
+
+    <!-- CAMPOS DE CONTROLE INTERNO (não aparecem na impressão) -->
+    <div class="form-section controle-interno">
+        <div class="form-row">
+            <div class="form-group">
+                <label>🏥 Especialidade:</label>
+                <select id="especialidade" required>
+                    <option value="">Selecione...</option>
+                    <option value="Cardiologia">Cardiologia</option>
+                    <option value="Endocrinologia">Endocrinologia</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>📋 Tipo de Atendimento:</label>
+                <select id="tipo_atendimento" required>
+                    <option value="">Selecione...</option>
+                    <option value="Consulta">Consulta</option>
+                    <option value="Exame">Exame</option>
+                </select>
+            </div>
+        </div>
     </div>
 
     <div class="form-section">
@@ -575,6 +608,14 @@
             <div class="form-group">
                 <label>Idade:</label>
                 <input type="text" id="idade" placeholder="Automático" readonly>
+            </div>
+            <div class="form-group">
+                <label>👤 Sexo:</label>
+                <select id="sexo" required>
+                    <option value="">Selecione...</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Feminino">Feminino</option>
+                </select>
             </div>
         </div>
 
@@ -827,6 +868,9 @@
             nome_paciente: document.getElementById('nome').value.trim(),
             data_nascimento: document.getElementById('nascimento').value || null,
             idade: document.getElementById('idade').value || null,
+            sexo: document.getElementById('sexo').value || null,
+            especialidade: document.getElementById('especialidade').value || null,
+            tipo_atendimento: document.getElementById('tipo_atendimento').value || null,
             data_triagem: document.getElementById('data').value || null,
             hora_triagem: document.getElementById('hora').value || null,
             pressao_sis_esquerdo: parseInt(document.getElementById('sis_esq').value) || null,
@@ -921,10 +965,12 @@
                         <tr>
                             <th>Data</th>
                             <th>Hora</th>
+                            <th>Especialidade</th>
+                            <th>Tipo</th>
                             <th>Paciente</th>
+                            <th>Sexo</th>
                             <th>Idade</th>
                             <th>PA (Esq)</th>
-                            <th>PA (Dir)</th>
                             <th>FC</th>
                             <th>SpO₂</th>
                             <th>IMC</th>
@@ -936,10 +982,11 @@
             data.forEach(item => {
                 const dataTriagem = item.data_triagem ? new Date(item.data_triagem).toLocaleDateString('pt-BR') : '-';
                 const horaTriagem = item.hora_triagem || '-';
+                const especialidade = item.especialidade || '-';
+                const tipo = item.tipo_atendimento || '-';
+                const sexo = item.sexo ? (item.sexo === 'Masculino' ? 'M' : 'F') : '-';
                 const paEsq = item.pressao_sis_esquerdo && item.pressao_dia_esquerdo 
                     ? `${item.pressao_sis_esquerdo}×${item.pressao_dia_esquerdo}` : '-';
-                const paDir = item.pressao_sis_direito && item.pressao_dia_direito 
-                    ? `${item.pressao_sis_direito}×${item.pressao_dia_direito}` : '-';
                 const fc = item.frequencia_cardiaca || '-';
                 const spo2 = item.saturacao_oxigenio ? `${item.saturacao_oxigenio}%` : '-';
                 const imc = item.imc ? item.imc.toFixed(1) : '-';
@@ -948,10 +995,12 @@
                     <tr>
                         <td>${dataTriagem}</td>
                         <td>${horaTriagem}</td>
+                        <td>${especialidade}</td>
+                        <td>${tipo}</td>
                         <td><strong>${item.nome_paciente}</strong></td>
+                        <td>${sexo}</td>
                         <td>${item.idade || '-'}</td>
                         <td>${paEsq}</td>
-                        <td>${paDir}</td>
                         <td>${fc}</td>
                         <td>${spo2}</td>
                         <td>${imc}</td>
