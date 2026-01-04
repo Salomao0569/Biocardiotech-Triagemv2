@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard de Gestão - Clínica Biocardio</title>
+    <title>Business Intelligence - Clínica Biocardio</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,7 +35,7 @@
         }
         
         .header-content {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
@@ -54,6 +54,12 @@
         
         .clinica { color: #fff; }
         .biocardio { color: #c8102e; }
+        
+        .header-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
         
         .header-nav {
             display: flex;
@@ -84,7 +90,7 @@
         
         /* CONTAINER PRINCIPAL */
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 30px auto;
             padding: 0 20px;
         }
@@ -94,10 +100,17 @@
             color: #003d7a;
             font-size: 32px;
             font-weight: 800;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
             text-align: center;
             text-transform: uppercase;
             letter-spacing: 1px;
+        }
+        
+        .page-subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
         }
         
         /* CARDS DE ESTATÍSTICAS */
@@ -126,6 +139,8 @@
         .stat-card.red { border-left-color: #c8102e; }
         .stat-card.green { border-left-color: #28a745; }
         .stat-card.orange { border-left-color: #fd7e14; }
+        .stat-card.purple { border-left-color: #6f42c1; }
+        .stat-card.teal { border-left-color: #20c997; }
         
         .stat-card-icon {
             font-size: 40px;
@@ -134,7 +149,7 @@
         
         .stat-card-title {
             font-family: 'Montserrat', sans-serif;
-            font-size: 14px;
+            font-size: 13px;
             color: #666;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -156,8 +171,8 @@
             margin-top: 8px;
         }
         
-        /* TABELA DE PRODUÇÃO */
-        .production-section {
+        /* SEÇÃO */
+        .section {
             background: white;
             border-radius: 16px;
             padding: 40px;
@@ -167,15 +182,24 @@
         
         .section-title {
             font-family: 'Montserrat', sans-serif;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
             color: #003d7a;
-            margin-bottom: 30px;
-            text-align: center;
+            margin-bottom: 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
+        .section-subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        /* TABELA DE PRODUÇÃO */
         .production-table {
             width: 100%;
             border-collapse: collapse;
@@ -192,7 +216,7 @@
             text-align: center;
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -245,18 +269,54 @@
             letter-spacing: 0.5px;
         }
         
-        /* GRÁFICO DE BARRAS */
-        .chart-section {
-            background: white;
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-            margin-bottom: 40px;
+        /* KPI CARDS */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
         }
         
+        .kpi-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            padding: 25px;
+            border-left: 4px solid;
+        }
+        
+        .kpi-card.success { border-left-color: #28a745; }
+        .kpi-card.info { border-left-color: #17a2b8; }
+        .kpi-card.warning { border-left-color: #ffc107; }
+        
+        .kpi-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .kpi-value {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 36px;
+            font-weight: 800;
+            color: #003d7a;
+            line-height: 1;
+        }
+        
+        .kpi-description {
+            font-size: 12px;
+            color: #888;
+            margin-top: 8px;
+        }
+        
+        /* GRÁFICO */
         .chart-wrapper {
             position: relative;
             height: 400px;
+            margin-top: 20px;
         }
         
         /* LOADING */
@@ -276,6 +336,27 @@
             0%, 20% { content: '.'; }
             40% { content: '..'; }
             60%, 100% { content: '...'; }
+        }
+        
+        /* BADGE */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .badge.info {
+            background: #d1ecf1;
+            color: #0c5460;
         }
         
         /* RESPONSIVO */
@@ -325,8 +406,11 @@
 
 <div class="header">
     <div class="header-content">
-        <div class="logo">
-            <span class="clinica">CLÍNICA</span> <span class="biocardio">Biocardio</span>
+        <div>
+            <div class="logo">
+                <span class="clinica">CLÍNICA</span> <span class="biocardio">Biocardio</span>
+            </div>
+            <div class="header-subtitle">Business Intelligence & Analytics</div>
         </div>
         <div class="header-nav">
             <a href="index.html" class="btn-nav">📋 Nova Triagem</a>
@@ -336,12 +420,13 @@
 </div>
 
 <div class="container">
-    <h1 class="page-title">📊 Dashboard de Gestão</h1>
+    <h1 class="page-title">🧠 Business Intelligence</h1>
+    <p class="page-subtitle">Inteligência de Dados • Jornada do Paciente • Previsibilidade</p>
     
-    <div id="loading" class="loading">Carregando dados</div>
+    <div id="loading" class="loading">Carregando inteligência de dados</div>
     
     <div id="dashboard" style="display: none;">
-        <!-- CARDS DE ESTATÍSTICAS -->
+        <!-- CARDS DE MÉTRICAS GERAIS -->
         <div class="stats-grid">
             <div class="stat-card blue">
                 <div class="stat-card-icon">📅</div>
@@ -372,9 +457,10 @@
             </div>
         </div>
         
-        <!-- TABELA DE PRODUÇÃO POR ESPECIALIDADE -->
-        <div class="production-section">
+        <!-- MATRIZ DE PRODUÇÃO POR ESPECIALIDADE -->
+        <div class="section">
             <h2 class="section-title">📋 Matriz de Produção por Especialidade</h2>
+            <p class="section-subtitle">Hard Data: Contagens absolutas de atendimentos por especialidade médica</p>
             <table class="production-table">
                 <thead>
                     <tr>
@@ -384,7 +470,7 @@
                         <th>Este Mês</th>
                     </tr>
                 </thead>
-                <tbody id="production-tbody">
+                <tbody>
                     <tr>
                         <td>Cardiologia</td>
                         <td>
@@ -434,11 +520,58 @@
             </table>
         </div>
         
-        <!-- GRÁFICO DE BARRAS: DISTRIBUIÇÃO POR FAIXA ETÁRIA -->
-        <div class="chart-section">
-            <h2 class="section-title">👥 Distribuição por Faixa Etária e Sexo</h2>
+        <!-- JORNADA DO PACIENTE -->
+        <div class="section">
+            <h2 class="section-title">🔄 Jornada do Paciente</h2>
+            <p class="section-subtitle">Inteligência de retenção, fidelidade e comportamento multidisciplinar</p>
+            
+            <div class="kpi-grid">
+                <div class="kpi-card success">
+                    <div class="kpi-label">📊 Taxa de Retenção</div>
+                    <div class="kpi-value" id="kpi-retencao">0%</div>
+                    <div class="kpi-description">Pacientes com 2+ visitas / Total de pacientes únicos</div>
+                </div>
+                
+                <div class="kpi-card info">
+                    <div class="kpi-label">⏱️ Tempo Médio de Retorno</div>
+                    <div class="kpi-value" id="kpi-tempo-retorno">-- dias</div>
+                    <div class="kpi-description">Média de dias entre a primeira e segunda visita</div>
+                </div>
+                
+                <div class="kpi-card warning">
+                    <div class="kpi-label">🔀 Pacientes Multidisciplinares</div>
+                    <div class="kpi-value" id="kpi-multidisciplinar">0%</div>
+                    <div class="kpi-description">Pacientes atendidos em 2+ especialidades (integração)</div>
+                </div>
+            </div>
+            
+            <div class="kpi-grid" style="margin-top: 20px;">
+                <div class="kpi-card info">
+                    <div class="kpi-label">👥 Total de Pacientes Únicos</div>
+                    <div class="kpi-value" id="kpi-pacientes-unicos">0</div>
+                    <div class="kpi-description">Base ativa no período</div>
+                </div>
+                
+                <div class="kpi-card success">
+                    <div class="kpi-label">🔁 Pacientes Recorrentes</div>
+                    <div class="kpi-value" id="kpi-pacientes-recorrentes">0</div>
+                    <div class="kpi-description">Pacientes com 2+ atendimentos</div>
+                </div>
+                
+                <div class="kpi-card warning">
+                    <div class="kpi-label">🌟 Pacientes Novos</div>
+                    <div class="kpi-value" id="kpi-pacientes-novos">0</div>
+                    <div class="kpi-description">Primeira visita (conversão inicial)</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- PERFIL DEMOGRÁFICO -->
+        <div class="section">
+            <h2 class="section-title">👥 Perfil Demográfico do Paciente</h2>
+            <p class="section-subtitle">Dados estruturados para análise preditiva e machine learning</p>
             <div class="chart-wrapper">
-                <canvas id="chartFaixaEtaria"></canvas>
+                <canvas id="chartPerfil"></canvas>
             </div>
         </div>
     </div>
@@ -447,7 +580,7 @@
 <script>
     // Variáveis globais
     let supabaseClient = null;
-    let chartFaixaEtaria = null;
+    let chartPerfil = null;
     
     // Inicializar Supabase
     function inicializarSupabase() {
@@ -479,7 +612,7 @@
     function getStartOfWeek() {
         const now = new Date();
         const day = now.getDay();
-        const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Ajusta para segunda-feira
+        const diff = now.getDate() - day + (day === 0 ? -6 : 1);
         const monday = new Date(now.setDate(diff));
         monday.setHours(0, 0, 0, 0);
         return monday.toISOString().split('T')[0];
@@ -514,11 +647,14 @@
             // Buscar todos os dados
             const { data: allData, error: allError } = await supabaseClient
                 .from('triagens')
-                .select('especialidade, data_triagem');
+                .select('nome_paciente, especialidade, data_triagem, criado_em')
+                .order('criado_em', { ascending: true });
             
             if (allError) throw allError;
             
-            // Contadores gerais
+            // ===============================================
+            // 1. CONTADORES GERAIS
+            // ===============================================
             let countHoje = 0;
             let countSemana = 0;
             let countMes = 0;
@@ -531,7 +667,6 @@
                 'Cirurgia Vascular': { hoje: 0, semana: 0, mes: 0 }
             };
             
-            // Processar dados
             allData.forEach(item => {
                 const dataTriagem = item.data_triagem;
                 const especialidade = item.especialidade;
@@ -552,13 +687,13 @@
                 }
             });
             
-            // Atualizar cards de estatísticas
+            // Atualizar cards
             document.getElementById('stat-hoje').innerText = countHoje;
             document.getElementById('stat-semana').innerText = countSemana;
             document.getElementById('stat-mes').innerText = countMes;
             document.getElementById('stat-ano').innerText = countAno;
             
-            // Atualizar tabela de produção
+            // Atualizar matriz de produção
             document.getElementById('cardio-hoje').innerText = production['Cardiologia'].hoje;
             document.getElementById('cardio-semana').innerText = production['Cardiologia'].semana;
             document.getElementById('cardio-mes').innerText = production['Cardiologia'].mes;
@@ -571,15 +706,103 @@
             document.getElementById('vascular-semana').innerText = production['Cirurgia Vascular'].semana;
             document.getElementById('vascular-mes').innerText = production['Cirurgia Vascular'].mes;
             
-            // Buscar dados de faixa etária
+            // ===============================================
+            // 2. INTELIGÊNCIA: JORNADA DO PACIENTE
+            // ===============================================
+            
+            // Agrupar por nome do paciente
+            const pacientes = {};
+            allData.forEach(item => {
+                const nome = item.nome_paciente ? item.nome_paciente.trim().toLowerCase() : null;
+                if (!nome) return;
+                
+                if (!pacientes[nome]) {
+                    pacientes[nome] = {
+                        visitas: [],
+                        especialidades: new Set()
+                    };
+                }
+                
+                pacientes[nome].visitas.push({
+                    data: item.data_triagem,
+                    criado_em: item.criado_em
+                });
+                
+                if (item.especialidade) {
+                    pacientes[nome].especialidades.add(item.especialidade);
+                }
+            });
+            
+            // KPIs
+            const totalPacientesUnicos = Object.keys(pacientes).length;
+            let pacientesRecorrentes = 0;
+            let pacientesNovos = 0;
+            let pacientesMultidisciplinares = 0;
+            let somaTempoRetorno = 0;
+            let countTempoRetorno = 0;
+            
+            Object.values(pacientes).forEach(paciente => {
+                const numVisitas = paciente.visitas.length;
+                
+                if (numVisitas >= 2) {
+                    pacientesRecorrentes++;
+                    
+                    // Calcular tempo de retorno
+                    const visitasOrdenadas = paciente.visitas.sort((a, b) => 
+                        new Date(a.criado_em) - new Date(b.criado_em)
+                    );
+                    
+                    const primeiraVisita = new Date(visitasOrdenadas[0].criado_em);
+                    const segundaVisita = new Date(visitasOrdenadas[1].criado_em);
+                    const diffDias = Math.floor((segundaVisita - primeiraVisita) / (1000 * 60 * 60 * 24));
+                    
+                    if (diffDias > 0) {
+                        somaTempoRetorno += diffDias;
+                        countTempoRetorno++;
+                    }
+                } else {
+                    pacientesNovos++;
+                }
+                
+                // Multidisciplinar
+                if (paciente.especialidades.size >= 2) {
+                    pacientesMultidisciplinares++;
+                }
+            });
+            
+            // Taxa de Retenção
+            const taxaRetencao = totalPacientesUnicos > 0 
+                ? ((pacientesRecorrentes / totalPacientesUnicos) * 100).toFixed(1) 
+                : 0;
+            
+            // Tempo Médio de Retorno
+            const tempoMedioRetorno = countTempoRetorno > 0 
+                ? Math.round(somaTempoRetorno / countTempoRetorno) 
+                : 0;
+            
+            // Taxa Multidisciplinar
+            const taxaMultidisciplinar = totalPacientesUnicos > 0 
+                ? ((pacientesMultidisciplinares / totalPacientesUnicos) * 100).toFixed(1) 
+                : 0;
+            
+            // Atualizar KPIs
+            document.getElementById('kpi-retencao').innerText = taxaRetencao + '%';
+            document.getElementById('kpi-tempo-retorno').innerText = tempoMedioRetorno > 0 ? tempoMedioRetorno + ' dias' : '-- dias';
+            document.getElementById('kpi-multidisciplinar').innerText = taxaMultidisciplinar + '%';
+            document.getElementById('kpi-pacientes-unicos').innerText = totalPacientesUnicos;
+            document.getElementById('kpi-pacientes-recorrentes').innerText = pacientesRecorrentes;
+            document.getElementById('kpi-pacientes-novos').innerText = pacientesNovos;
+            
+            // ===============================================
+            // 3. PERFIL DEMOGRÁFICO
+            // ===============================================
             const { data: faixasEtarias, error: faixaError } = await supabaseClient
                 .from('distribuicao_faixa_etaria')
                 .select('*');
             
             if (faixaError) throw faixaError;
             
-            // Criar gráfico de barras
-            criarGraficoBarras(faixasEtarias);
+            criarGraficoPerfil(faixasEtarias);
             
             // Mostrar dashboard
             document.getElementById('loading').style.display = 'none';
@@ -591,13 +814,12 @@
         }
     }
     
-    // Criar gráfico de barras (Faixa Etária e Sexo)
-    function criarGraficoBarras(dados) {
-        const ctx = document.getElementById('chartFaixaEtaria');
+    // Criar gráfico de perfil demográfico
+    function criarGraficoPerfil(dados) {
+        const ctx = document.getElementById('chartPerfil');
         
-        // Destruir gráfico anterior se existir
-        if (chartFaixaEtaria) {
-            chartFaixaEtaria.destroy();
+        if (chartPerfil) {
+            chartPerfil.destroy();
         }
         
         // Organizar dados por faixa etária e sexo
@@ -616,7 +838,7 @@
             }
         });
         
-        chartFaixaEtaria = new Chart(ctx, {
+        chartPerfil = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: faixas,
@@ -625,13 +847,13 @@
                         label: 'Masculino',
                         data: masculino,
                         backgroundColor: '#003d7a',
-                        borderRadius: 6
+                        borderRadius: 8
                     },
                     {
                         label: 'Feminino',
                         data: feminino,
                         backgroundColor: '#c8102e',
-                        borderRadius: 6
+                        borderRadius: 8
                     }
                 ]
             },
@@ -647,7 +869,8 @@
                         ticks: {
                             font: {
                                 family: 'Montserrat',
-                                size: 12
+                                size: 12,
+                                weight: '600'
                             }
                         }
                     },
@@ -657,7 +880,8 @@
                             stepSize: 1,
                             font: {
                                 family: 'Montserrat',
-                                size: 12
+                                size: 12,
+                                weight: '600'
                             }
                         },
                         grid: {
@@ -677,6 +901,19 @@
                             padding: 20,
                             usePointStyle: true,
                             pointStyle: 'circle'
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Distribuição estruturada para análise preditiva (IA-ready)',
+                        font: {
+                            family: 'Open Sans',
+                            size: 13,
+                            weight: '400'
+                        },
+                        color: '#666',
+                        padding: {
+                            bottom: 20
                         }
                     }
                 }
