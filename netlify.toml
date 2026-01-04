@@ -1,0 +1,16 @@
+[build]
+  publish = "."
+  
+[build.environment]
+  NODE_VERSION = "18"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false
+  
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
