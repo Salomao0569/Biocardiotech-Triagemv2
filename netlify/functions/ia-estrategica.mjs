@@ -41,7 +41,7 @@ export const handler = async (event) => {
         const openai = new OpenAI({ apiKey: apiKey });
 
         // PROCESSAR DADOS COMPLETOS DO SUPABASE
-        const { totalPacientes, totalAtendimentos, especialidades, paciêntes, tendencias } = dadosCompletos || {};
+        const { totalPacientes, totalAtendimentos, totalEncaminhados, encaminhamentosEndocrinoCardio, pacientes } = dadosCompletos || {};
 
         // CONSTRUIR CONTEXTO ESTRATÉGICO
         let contexto = `Você é o Diretor de Estratégia da Biocardio. Analise o banco de dados e forneça insights acionáveis.\n\n`;
@@ -49,14 +49,23 @@ export const handler = async (event) => {
         contexto += `DADOS GERAIS DA CLÍNICA:\n`;
         contexto += `- Total de Pacientes Únicos: ${totalPacientes || 0}\n`;
         contexto += `- Total de Atendimentos: ${totalAtendimentos || 0}\n`;
-        contexto += `- Especialidades Ativas: ${especialidades ? especialidades.join(', ') : 'N/A'}\n\n`;
+        contexto += `- Pacientes Encaminhados (multi-especialidade): ${totalEncaminhados || 0}\n`;
+        contexto += `- Encaminhamentos Endocrinologia → Cardiologia: ${encaminhamentosEndocrinoCardio || 0}\n\n`;
         
         if (pacientes && pacientes.length > 0) {
-            contexto += `DADOS DE PACIENTES:\n`;
-            pacientes.slice(0, 50).forEach((p, i) => {
-                contexto += `${i + 1}. ${p.nome} - ${p.totalVisitas} visitas, Especialidades: ${p.especialidades.join(', ')}, `;
-                contexto += `Última PA: ${p.ultimaPA || 'N/A'}, `;
-                contexto += `Último Eco: ${p.ultimoEco || 'Nunca'}\n`;
+            contexto += `JORNADA DOS PACIENTES (com datas e fluxo de encaminhamento):\n`;
+            pacientes.slice(0, 30).forEach((p, i) => {
+                contexto += `\n${i + 1}. ${p.nome || 'N/A'}:\n`;
+                contexto += `   - Total de visitas: ${p.visitas || 0}\n`;
+                contexto += `   - Primeira especialidade: ${p.primeiraEspecialidade || 'N/A'}\n`;
+                contexto += `   - Fluxo de encaminhamento: ${p.fluxoEncaminhamento || 'Sem encaminhamento'}\n`;
+                if (p.foiEncaminhado) {
+                    contexto += `   - ENCAMINHADO: ${p.origemEncaminhamento} → ${p.destinoEncaminhamento}\n`;
+                }
+                contexto += `   - Dias sem retorno: ${p.diasSemRetorno || 0}\n`;
+                contexto += `   - Fez Ecocardiograma: ${p.fezEco ? 'Sim' : 'Não'}\n`;
+                contexto += `   - Última PA: ${p.ultimaPA || 'N/A'}\n`;
+                contexto += `   - Histórico completo: ${p.jornada || 'N/A'}\n`;
             });
         }
         

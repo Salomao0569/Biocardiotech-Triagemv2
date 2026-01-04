@@ -361,7 +361,7 @@
             <div class="insight-card insight-card-multi">
                 <div class="insight-card-header">
                     <div class="insight-card-icon">🔀</div>
-                    <h3>Sinergia Multidisciplinar</h3>
+                    <h3>Encaminhamentos</h3>
                 </div>
                 <div class="insight-card-body" id="card-multi"></div>
             </div>
@@ -372,6 +372,13 @@
                 </div>
                 <div class="insight-card-body" id="card-risco"></div>
             </div>
+        </div>
+        
+        <!-- Seção de Jornadas de Encaminhamento -->
+        <div class="diamond-section" style="margin-top: 20px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.1)); border-color: rgba(59, 130, 246, 0.3);">
+            <h2 class="diamond-title" style="color: #60a5fa;">🔄 Fluxo de Encaminhamentos</h2>
+            <p class="diamond-subtitle">Jornada dos pacientes entre especialidades</p>
+            <div id="encaminhamentos-list" class="diamond-list"></div>
         </div>
         
         <div class="diamond-section">
@@ -423,13 +430,59 @@ function processarPacientes(data) {
     const pac = {};
     data.forEach(a => {
         const n = a.nome_paciente;
-        if (!pac[n]) pac[n] = { nome: n, visitas: 0, esp: new Set(), pa: [], eco: false };
+        if (!pac[n]) pac[n] = { 
+            nome: n, 
+            visitas: 0, 
+            esp: new Set(), 
+            pa: [], 
+            eco: false,
+            jornada: [], // Array completo de consultas com datas
+            primeiraConsulta: null,
+            ultimaConsulta: null
+        };
         pac[n].visitas++;
         if (a.especialidade) pac[n].esp.add(a.especialidade);
-        if (a.pressao_sis_esquerdo) pac[n].pa.push({ data: a.data_triagem, sis: a.pressao_sis_esquerdo });
+        if (a.pressao_sis_esquerdo) pac[n].pa.push({ data: a.data_triagem, sis: a.pressao_sis_esquerdo, dia: a.pressao_dia_esquerdo });
         if (a.tipo_atendimento && a.tipo_atendimento.toLowerCase().includes('eco')) pac[n].eco = true;
+        
+        // Adicionar à jornada completa
+        pac[n].jornada.push({
+            data: a.data_triagem,
+            especialidade: a.especialidade || 'N/A',
+            tipo: a.tipo_atendimento || 'N/A',
+            pa: a.pressao_sis_esquerdo ? `${a.pressao_sis_esquerdo}x${a.pressao_dia_esquerdo}` : null
+        });
     });
-    return Object.values(pac).map(p => ({ ...p, esp: Array.from(p.esp) }));
+    
+    // Processar jornada de cada paciente
+    return Object.values(pac).map(p => {
+        // Ordenar jornada por data (mais antiga primeiro)
+        p.jornada.sort((a, b) => new Date(a.data) - new Date(b.data));
+        
+        // Identificar primeira e última consulta
+        if (p.jornada.length > 0) {
+            p.primeiraConsulta = p.jornada[0];
+            p.ultimaConsulta = p.jornada[p.jornada.length - 1];
+            p.primeiraEspecialidade = p.jornada[0].especialidade;
+            
+            // Calcular sequência de especialidades (fluxo de encaminhamento)
+            p.fluxoEspecialidades = p.jornada.map(j => j.especialidade).filter((v, i, a) => a.indexOf(v) === i);
+            
+            // Calcular dias desde última consulta
+            const hoje = new Date();
+            const ultimaData = new Date(p.ultimaConsulta.data);
+            p.diasSemRetorno = Math.floor((hoje - ultimaData) / (1000 * 60 * 60 * 24));
+            
+            // Identificar se foi encaminhado (mudou de especialidade)
+            p.foiEncaminhado = p.fluxoEspecialidades.length > 1;
+            if (p.foiEncaminhado) {
+                p.origemEncaminhamento = p.fluxoEspecialidades[0];
+                p.destinoEncaminhamento = p.fluxoEspecialidades[p.fluxoEspecialidades.length - 1];
+            }
+        }
+        
+        return { ...p, esp: Array.from(p.esp) };
+    });
 }
 
 function renderizarInsights(pacientes) {
@@ -438,15 +491,32 @@ function renderizarInsights(pacientes) {
         ? `<div style="font-size:28px;font-weight:700;color:#10b981;margin-bottom:8px">${eco.length}</div><p>Pacientes Cardio sem Eco</p>`
         : '✅ Todos fizeram Eco!';
     
-    const multi = pacientes.filter(p => p.esp.length > 1);
-    document.getElementById('card-multi').innerHTML = multi.length > 0
-        ? `<div style="font-size:28px;font-weight:700;color:#8b5cf6;margin-bottom:8px">${multi.length}</div><p>Tratamento integrado</p>`
-        : '📊 Todos em especialidade única';
+    // Encaminhamentos (pacientes multi-especialidade)
+    const encaminhados = pacientes.filter(p => p.foiEncaminhado);
+    document.getElementById('card-multi').innerHTML = encaminhados.length > 0
+        ? `<div style="font-size:28px;font-weight:700;color:#3b82f6;margin-bottom:8px">${encaminhados.length}</div><p>Pacientes encaminhados</p>`
+        : '📊 Sem encaminhamentos registrados';
     
     const risco = pacientes.filter(p => p.pa.length > 0 && p.pa[0].sis >= 160);
     document.getElementById('card-risco').innerHTML = risco.length > 0
         ? `<div style="font-size:28px;font-weight:700;color:#ef4444;margin-bottom:8px">${risco.length}</div><p>PA elevada (≥160)</p>`
         : '✅ Nenhum risco crítico';
+    
+    // Renderizar lista de encaminhamentos
+    const listEncaminhamentos = document.getElementById('encaminhamentos-list');
+    if (encaminhados.length > 0) {
+        listEncaminhamentos.innerHTML = encaminhados.map(p => `
+            <div class="diamond-item" style="border-color: rgba(59, 130, 246, 0.3);">
+                <div class="diamond-item-name" style="color: #60a5fa;">🔄 ${p.nome}</div>
+                <div class="diamond-item-stats">
+                    <strong>${p.fluxoEspecialidades ? p.fluxoEspecialidades.join(' → ') : 'N/A'}</strong><br>
+                    <small>${p.visitas} consultas • Última há ${p.diasSemRetorno || 0} dias</small>
+                </div>
+            </div>
+        `).join('');
+    } else {
+        listEncaminhamentos.innerHTML = '<div style="text-align:center;padding:20px;color:#cbd5e1">Nenhum encaminhamento entre especialidades ainda.<br><small>Registre pacientes em múltiplas especialidades para rastrear o fluxo.</small></div>';
+    }
 }
 
 function renderizarDiamond(pacientes) {
@@ -505,8 +575,32 @@ async function enviarPergunta() {
     chat.scrollTop = chat.scrollHeight;
     
     try {
-        const { data } = await supabaseClient.from('triagens').select('*');
+        const { data } = await supabaseClient.from('triagens').select('*').order('data_triagem', { ascending: true });
         const pacientes = processarPacientes(data);
+        
+        // Preparar dados enriquecidos com jornada completa
+        const dadosEnriquecidos = pacientes.slice(0, 50).map(p => ({
+            nome: p.nome,
+            visitas: p.visitas,
+            especialidades: p.esp,
+            primeiraEspecialidade: p.primeiraEspecialidade || 'N/A',
+            fluxoEncaminhamento: p.fluxoEspecialidades ? p.fluxoEspecialidades.join(' → ') : 'N/A',
+            foiEncaminhado: p.foiEncaminhado || false,
+            origemEncaminhamento: p.origemEncaminhamento || null,
+            destinoEncaminhamento: p.destinoEncaminhamento || null,
+            diasSemRetorno: p.diasSemRetorno || 0,
+            fezEco: p.eco,
+            ultimaPA: p.pa[0] ? `${p.pa[0].sis}x${p.pa[0].dia}` : 'N/A',
+            jornada: p.jornada ? p.jornada.map(j => `${j.data}: ${j.especialidade} (${j.tipo})`).join(' | ') : 'N/A'
+        }));
+        
+        // Estatísticas de encaminhamento
+        const encaminhados = pacientes.filter(p => p.foiEncaminhado);
+        const endocrinoParaCardio = encaminhados.filter(p => 
+            p.fluxoEspecialidades && 
+            p.fluxoEspecialidades.includes('Endocrinologia') && 
+            p.fluxoEspecialidades.indexOf('Cardiologia') > p.fluxoEspecialidades.indexOf('Endocrinologia')
+        );
         
         const resp = await fetch('/.netlify/functions/ia-estrategica', {
             method: 'POST',
@@ -516,7 +610,9 @@ async function enviarPergunta() {
                 dadosCompletos: {
                     totalPacientes: pacientes.length,
                     totalAtendimentos: data.length,
-                    pacientes: pacientes.slice(0,30).map(p => ({ nome: p.nome, visitas: p.visitas, esp: p.esp, pa: p.pa[0]?.sis }))
+                    totalEncaminhados: encaminhados.length,
+                    encaminhamentosEndocrinoCardio: endocrinoParaCardio.length,
+                    pacientes: dadosEnriquecidos
                 }
             })
         });

@@ -1,0 +1,46 @@
+functionsDirectory = "C:\\Users\\T-GAMER\\OneDrive\\Sites Sandbox\\Trigem Clinica BIocardio - V2\\netlify\\functions"
+functionsDirectoryOrigin = "config"
+headersOrigin = "config"
+plugins = []
+redirects = []
+
+[build]
+publish = "C:\\Users\\T-GAMER\\OneDrive\\Sites Sandbox\\Trigem Clinica BIocardio - V2"
+publishOrigin = "config"
+functions = "C:\\Users\\T-GAMER\\OneDrive\\Sites Sandbox\\Trigem Clinica BIocardio - V2\\netlify\\functions"
+
+[build.environment]
+NODE_VERSION = "18"
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]
+
+[functions]
+
+[functions."*"]
+node_bundler = "esbuild"
+
+[[headers]]
+for = "/*.html"
+
+[headers.values]
+Cache-Control = "no-cache, no-store, must-revalidate"
+Pragma = "no-cache"
+Expires = "0"
+
+[[headers]]
+for = "/*.js"
+
+[headers.values]
+Cache-Control = "no-cache, no-store, must-revalidate"
+Pragma = "no-cache"
+Expires = "0"

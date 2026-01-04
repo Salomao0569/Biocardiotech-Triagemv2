@@ -1,0 +1,11 @@
+{
+  "name": "biocardio-triagem",
+  "version": "1.0.0",
+  "description": "Sistema de Triagem - Clínica Biocardio",
+  "type": "module",
+  "dependencies": {
+    "openai": "^4.0.0",
+    "@supabase/supabase-js": "^2.0.0"
+  }
+}
+
