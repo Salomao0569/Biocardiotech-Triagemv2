@@ -30,12 +30,20 @@ export default async (req, context) => {
     try {
         // Ler dados do request
         const body = await req.json();
-        const { paciente, atendimento, jornada } = body;
+        const { paciente, atendimentoAtual, historicoCompleto } = body;
 
         // Validação
-        if (!paciente || !atendimento) {
+        if (!paciente || !atendimentoAtual) {
             return new Response(
                 JSON.stringify({ error: 'Dados do paciente ou atendimento ausentes.' }),
+                { status: 400, headers }
+            );
+        }
+        
+        // Validar histórico
+        if (!historicoCompleto || !Array.isArray(historicoCompleto) || historicoCompleto.length === 0) {
+            return new Response(
+                JSON.stringify({ error: 'Histórico do paciente ausente ou inválido.' }),
                 { status: 400, headers }
             );
         }
@@ -50,52 +58,114 @@ export default async (req, context) => {
             );
         }
 
-        // Preparar dados para IA
+        // PROCESSAR HISTÓRICO COMPLETO
+        const totalVisitas = historicoCompleto.length;
+        
+        // Extrair especialidades únicas visitadas
+        const especialidadesSet = new Set();
+        historicoCompleto.forEach(atend => {
+            if (atend.especialidade) {
+                especialidadesSet.add(atend.especialidade);
+            }
+        });
+        const especialidadesVisitadas = Array.from(especialidadesSet);
+        
+        // Verificar se é paciente recorrente
+        const isPrimeiraVisita = totalVisitas === 1;
+        const isRecorrente = totalVisitas > 1;
+        
+        // Calcular tempo desde última visita (se houver mais de uma)
+        let diasDesdeUltimaVisita = null;
+        if (totalVisitas > 1) {
+            const ordenado = [...historicoCompleto].sort((a, b) => 
+                new Date(b.data_triagem) - new Date(a.data_triagem)
+            );
+            const maisRecente = new Date(ordenado[0].data_triagem);
+            const segundaMaisRecente = new Date(ordenado[1].data_triagem);
+            diasDesdeUltimaVisita = Math.floor((maisRecente - segundaMaisRecente) / (1000 * 60 * 60 * 24));
+        }
+        
+        // Preparar dados atuais (atendimento de hoje)
+        const dadosAtuais = {
+            tipoAtendimento: atendimentoAtual.tipo_atendimento,
+            especialidade: atendimentoAtual.especialidade,
+            peso: atendimentoAtual.peso_kg,
+            altura: atendimentoAtual.altura_cm,
+            imc: atendimentoAtual.imc,
+            paEsquerdo: `${atendimentoAtual.pressao_sis_esquerdo}×${atendimentoAtual.pressao_dia_esquerdo}`,
+            paDireito: atendimentoAtual.pressao_sis_direito 
+                ? `${atendimentoAtual.pressao_sis_direito}×${atendimentoAtual.pressao_dia_direito}` 
+                : 'Não medido',
+            fc: atendimentoAtual.frequencia_cardiaca,
+            spo2: atendimentoAtual.saturacao_oxigenio,
+            dataAtendimento: atendimentoAtual.data_triagem
+        };
+        
+        // Preparar dados completos para IA
         const dadosPaciente = {
             nome: paciente.nome,
             idade: paciente.idade,
             sexo: paciente.sexo,
-            totalVisitas: paciente.totalVisitas,
-            tipoAtendimento: atendimento.tipo_atendimento,
-            especialidade: atendimento.especialidade,
-            peso: atendimento.peso_kg,
-            altura: atendimento.altura_cm,
-            imc: atendimento.imc,
-            paEsquerdo: `${atendimento.pressao_sis_esquerdo}×${atendimento.pressao_dia_esquerdo}`,
-            paDireito: atendimento.pressao_sis_direito 
-                ? `${atendimento.pressao_sis_direito}×${atendimento.pressao_dia_direito}` 
-                : 'Não medido',
-            fc: atendimento.frequencia_cardiaca,
-            spo2: atendimento.saturacao_oxigenio,
-            dataAtendimento: atendimento.data_triagem,
-            isRecorrente: jornada?.pacientesRecorrentes > 0 || paciente.totalVisitas > 1
+            totalVisitas: totalVisitas,
+            especialidadesVisitadas: especialidadesVisitadas,
+            isPrimeiraVisita: isPrimeiraVisita,
+            isRecorrente: isRecorrente,
+            diasDesdeUltimaVisita: diasDesdeUltimaVisita,
+            dadosAtuais: dadosAtuais
         };
 
-        // Construir prompt
-        const prompt = `Você é o consultor de BI do Dr. Salomão na Clínica Biocardio. Analise estes dados vitais e de jornada:
+        // Construir prompt refinado com histórico completo
+        let contextoJornada = '';
+        
+        if (dadosPaciente.isPrimeiraVisita) {
+            contextoJornada = `Este é o PRIMEIRO ATENDIMENTO do paciente na clínica. Dê boas-vindas estratégicas e oriente sobre a importância do acompanhamento.`;
+        } else {
+            contextoJornada = `O paciente já veio ${dadosPaciente.totalVisitas} vezes à clínica. `;
+            
+            // Fidelidade
+            if (dadosPaciente.diasDesdeUltimaVisita !== null) {
+                if (dadosPaciente.diasDesdeUltimaVisita <= 30) {
+                    contextoJornada += `⭐ PACIENTE FIEL (última visita há ${dadosPaciente.diasDesdeUltimaVisita} dias). `;
+                } else if (dadosPaciente.diasDesdeUltimaVisita <= 180) {
+                    contextoJornada += `Paciente em acompanhamento regular (última visita há ${dadosPaciente.diasDesdeUltimaVisita} dias). `;
+                } else {
+                    contextoJornada += `⚠️ Paciente estava AFASTADO (última visita há ${dadosPaciente.diasDesdeUltimaVisita} dias - ${Math.floor(dadosPaciente.diasDesdeUltimaVisita / 30)} meses). `;
+                }
+            }
+            
+            // Cruzamento de especialidades
+            if (dadosPaciente.especialidadesVisitadas.length > 1) {
+                contextoJornada += `Jornada MULTIDISCIPLINAR: ${dadosPaciente.especialidadesVisitadas.join(', ')}. `;
+            } else {
+                contextoJornada += `Especialidade única: ${dadosPaciente.especialidadesVisitadas[0]}. `;
+            }
+        }
+        
+        const prompt = `Você é o gestor clínico da Biocardio. Analise a jornada completa deste paciente:
 
 PACIENTE: ${dadosPaciente.nome}
 IDADE: ${dadosPaciente.idade}
 SEXO: ${dadosPaciente.sexo}
-TOTAL DE VISITAS: ${dadosPaciente.totalVisitas}
-TIPO: ${dadosPaciente.isRecorrente ? '⭐ PACIENTE RECORRENTE' : 'Primeira visita'}
 
-DADOS DO ÚLTIMO ATENDIMENTO (${dadosPaciente.dataAtendimento}):
-- Especialidade: ${dadosPaciente.especialidade}
-- Tipo de Atendimento: ${dadosPaciente.tipoAtendimento}
-- Peso: ${dadosPaciente.peso} kg | Altura: ${dadosPaciente.altura} cm | IMC: ${dadosPaciente.imc}
-- PA Esquerdo: ${dadosPaciente.paEsquerdo} mmHg
-- PA Direito: ${dadosPaciente.paDireito} mmHg
-- FC: ${dadosPaciente.fc} bpm
-- SpO₂: ${dadosPaciente.spo2}%
+CONTEXTO DA JORNADA:
+${contextoJornada}
+
+DADOS DO ATENDIMENTO DE HOJE (${dadosPaciente.dadosAtuais.dataAtendimento}):
+- Especialidade: ${dadosPaciente.dadosAtuais.especialidade}
+- Tipo de Atendimento: ${dadosPaciente.dadosAtuais.tipoAtendimento}
+- Peso: ${dadosPaciente.dadosAtuais.peso} kg | Altura: ${dadosPaciente.dadosAtuais.altura} cm | IMC: ${dadosPaciente.dadosAtuais.imc}
+- PA Esquerdo: ${dadosPaciente.dadosAtuais.paEsquerdo} mmHg
+- PA Direito: ${dadosPaciente.dadosAtuais.paDireito} mmHg
+- FC: ${dadosPaciente.dadosAtuais.fc} bpm
+- SpO₂: ${dadosPaciente.dadosAtuais.spo2}%
 
 TAREFA:
 Forneça um insight clínico/gerencial de NO MÁXIMO 2 LINHAS, focado em:
-1. Risco cardiovascular (se houver)
-2. Necessidade de retorno
-3. Se for paciente recorrente, destaque isso positivamente
+1. FIDELIDADE: Ele é um paciente fiel ou estava sumido? Se primeira visita, dê boas-vindas.
+2. CRUZAMENTO: Se ele já passou por múltiplas especialidades, há conexão importante?
+3. ALERTA CLÍNICO: Risco cardiovascular ou necessidade de retorno urgente.
 
-Seja direto, objetivo e útil para o Dr. Salomão durante a consulta.`;
+Seja estratégico, direto e útil para o Dr. Salomão durante a consulta.`;
 
         // Chamar OpenAI API
         const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -143,7 +213,7 @@ Seja direto, objetivo e útil para o Dr. Salomão durante a consulta.`;
             );
         }
 
-        // Retornar insight
+        // Retornar insight com metadados completos
         return new Response(
             JSON.stringify({ 
                 success: true,
@@ -151,7 +221,11 @@ Seja direto, objetivo e útil para o Dr. Salomão durante a consulta.`;
                 metadata: {
                     model: 'gpt-4o-mini',
                     timestamp: new Date().toISOString(),
-                    pacienteRecorrente: dadosPaciente.isRecorrente
+                    totalVisitas: dadosPaciente.totalVisitas,
+                    isPrimeiraVisita: dadosPaciente.isPrimeiraVisita,
+                    pacienteRecorrente: dadosPaciente.isRecorrente,
+                    especialidadesVisitadas: dadosPaciente.especialidadesVisitadas,
+                    diasDesdeUltimaVisita: dadosPaciente.diasDesdeUltimaVisita
                 }
             }),
             { status: 200, headers }

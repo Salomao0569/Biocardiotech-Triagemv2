@@ -748,12 +748,61 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 10px;
+        }
+        
+        .metadata-left {
+            flex: 1;
+        }
+        
+        .metadata-right {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+        
+        .insight-badge-contador {
+            background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+        }
+        
+        .insight-badge-contador.primeira-visita {
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+            animation: pulse 2s infinite;
         }
         
         .insight-recorrente {
             background: #dcfce7;
             color: #166534;
-            padding: 4px 10px;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 11px;
+        }
+        
+        .insight-recorrente.fiel {
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+            color: #15803d;
+            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.2);
+        }
+        
+        .insight-recorrente.afastado {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .insight-multi {
+            background: linear-gradient(135deg, #e9d5ff, #f3e8ff);
+            color: #6b21a8;
+            padding: 5px 10px;
             border-radius: 8px;
             font-weight: 600;
             font-size: 11px;
@@ -1743,19 +1792,22 @@
         }
     }
     
-    // Chamar IA para análise
-    async function analisarComIA(paciente, atendimento, totalVisitas) {
+    // Chamar IA para análise com histórico completo
+    async function analisarComIA(paciente, historicoCompleto) {
         const insightConteudo = document.getElementById('insight-conteudo');
         
         // Mostrar loading
         insightConteudo.innerHTML = `
             <div class="insight-loading">
                 <div class="spinner"></div>
-                <span>Analisando dados com IA...</span>
+                <span>Analisando jornada completa do paciente...</span>
             </div>
         `;
         
         try {
+            const totalVisitas = historicoCompleto.length;
+            const atendimentoAtual = historicoCompleto[0]; // Mais recente
+            
             const response = await fetch('/.netlify/functions/analisar-paciente', {
                 method: 'POST',
                 headers: {
@@ -1765,13 +1817,10 @@
                     paciente: {
                         nome: paciente.nome_paciente,
                         idade: calcularIdadeAtual(paciente.data_nascimento),
-                        sexo: paciente.sexo,
-                        totalVisitas: totalVisitas
+                        sexo: paciente.sexo
                     },
-                    atendimento: atendimento,
-                    jornada: {
-                        pacientesRecorrentes: totalVisitas > 1 ? 1 : 0
-                    }
+                    atendimentoAtual: atendimentoAtual,
+                    historicoCompleto: historicoCompleto
                 })
             });
             
@@ -1782,15 +1831,53 @@
             const data = await response.json();
             
             if (data.success && data.insight) {
-                // Exibir insight
-                const isRecorrente = data.metadata?.pacienteRecorrente;
+                // Exibir insight com metadados completos
+                const metadata = data.metadata;
+                const totalVisitas = metadata?.totalVisitas || 1;
+                const isPrimeiraVisita = metadata?.isPrimeiraVisita || false;
+                const isRecorrente = metadata?.pacienteRecorrente || false;
+                const especialidades = metadata?.especialidadesVisitadas || [];
+                const diasDesdeUltima = metadata?.diasDesdeUltimaVisita;
+                
+                // Badge de contador
+                let badgeContador = '';
+                if (isPrimeiraVisita) {
+                    badgeContador = '<span class="insight-badge-contador primeira-visita">🎉 1ª Visita</span>';
+                } else {
+                    badgeContador = `<span class="insight-badge-contador">📊 Atendimento nº ${totalVisitas}</span>`;
+                }
+                
+                // Badge de recorrência
+                let badgeFidelidade = '';
+                if (isRecorrente) {
+                    if (diasDesdeUltima !== null && diasDesdeUltima <= 30) {
+                        badgeFidelidade = '<span class="insight-recorrente fiel">⭐ Paciente Fiel</span>';
+                    } else if (diasDesdeUltima !== null && diasDesdeUltima > 180) {
+                        badgeFidelidade = '<span class="insight-recorrente afastado">⏰ Retornou</span>';
+                    } else {
+                        badgeFidelidade = '<span class="insight-recorrente">⭐ Recorrente</span>';
+                    }
+                }
+                
+                // Badge multidisciplinar
+                let badgeMulti = '';
+                if (especialidades.length > 1) {
+                    badgeMulti = `<span class="insight-multi">🔀 ${especialidades.length} Especialidades</span>`;
+                }
+                
                 insightConteudo.innerHTML = `
                     <div class="insight-texto">
                         ${data.insight}
                     </div>
                     <div class="insight-metadata">
-                        <span>🤖 GPT-4o-mini • ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
-                        ${isRecorrente ? '<span class="insight-recorrente">⭐ Paciente Recorrente</span>' : ''}
+                        <div class="metadata-left">
+                            <span>🤖 GPT-4o-mini • ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
+                        </div>
+                        <div class="metadata-right">
+                            ${badgeContador}
+                            ${badgeFidelidade}
+                            ${badgeMulti}
+                        </div>
                     </div>
                 `;
             } else {
@@ -1817,8 +1904,8 @@
         document.getElementById('paciente-sexo').innerText = paciente.sexo || 'Não informado';
         document.getElementById('paciente-total-visitas').innerText = `${atendimentos.length} ${atendimentos.length === 1 ? 'visita' : 'visitas'}`;
         
-        // Chamar IA para análise (atendimento mais recente)
-        analisarComIA(paciente, atendimentos[0], atendimentos.length);
+        // Chamar IA para análise com histórico completo
+        analisarComIA(paciente, atendimentos);
         
         // Timeline de atendimentos
         const timeline = document.getElementById('timeline-atendimentos');
