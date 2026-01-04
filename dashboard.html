@@ -91,6 +91,79 @@
             box-shadow: 0 4px 12px rgba(255,255,255,0.3);
         }
         
+        /* TABS DE NAVEGAÇÃO */
+        .tabs-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 20px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 5px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .tab {
+            padding: 18px 40px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            background: transparent;
+            color: #6c757d;
+            border: none;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .tab:hover {
+            background: rgba(0, 61, 122, 0.05);
+            color: #003d7a;
+        }
+        
+        .tab.active {
+            background: white;
+            color: #003d7a;
+            border-bottom-color: #c8102e;
+        }
+        
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #c8102e;
+        }
+        
+        .tab-icon {
+            margin-right: 8px;
+        }
+        
+        /* CONTEÚDO DAS TABS */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
         /* CONTAINER PRINCIPAL */
         .container {
             max-width: 1600px;
@@ -1028,6 +1101,338 @@
                 opacity: 0.7;
             }
         }
+        
+        /* ============================================ */
+        /* CENTRAL DE INTELIGÊNCIA IA - PROFESSIONAL DARK MODE */
+        /* ============================================ */
+        
+        .central-ia-container {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .central-ia-container .page-title,
+        .central-ia-container .page-subtitle {
+            color: white;
+        }
+        
+        /* ORACLE IA - CHAT INTERATIVO */
+        .oracle-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .oracle-title {
+            color: #60a5fa;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .oracle-subtitle {
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
+        
+        .oracle-chat {
+            background: #1e293b;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .chat-messages {
+            min-height: 300px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+        
+        .chat-welcome {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .welcome-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .chat-welcome h3 {
+            color: #60a5fa;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        
+        .chat-welcome p {
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
+        
+        .example-questions {
+            list-style: none;
+            text-align: left;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .example-questions li {
+            background: rgba(96, 165, 250, 0.1);
+            padding: 12px 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            color: #cbd5e1;
+            border-left: 3px solid #60a5fa;
+        }
+        
+        .chat-message {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .chat-message.user {
+            flex-direction: row-reverse;
+        }
+        
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        
+        .chat-avatar.user {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+        
+        .chat-avatar.ai {
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+        }
+        
+        .chat-bubble {
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 12px;
+            word-wrap: break-word;
+        }
+        
+        .chat-bubble.user {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+        
+        .chat-bubble.ai {
+            background: rgba(255,255,255,0.05);
+            color: #e2e8f0;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            background: rgba(255,255,255,0.03);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+            color: white;
+            font-size: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: #60a5fa;
+            background: rgba(255,255,255,0.08);
+        }
+        
+        .btn-send-chat {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-send-chat:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+        }
+        
+        /* GRID DE INSIGHTS PROATIVOS */
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .insight-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
+        }
+        
+        .insight-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+            border-color: rgba(255,255,255,0.2);
+        }
+        
+        .insight-card-eco {
+            border-left: 4px solid #10b981;
+        }
+        
+        .insight-card-multi {
+            border-left: 4px solid #8b5cf6;
+        }
+        
+        .insight-card-risco {
+            border-left: 4px solid #ef4444;
+        }
+        
+        .insight-card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .insight-card-icon {
+            font-size: 32px;
+        }
+        
+        .insight-card-header h3 {
+            color: #e2e8f0;
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .insight-card-body {
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+        
+        .loading-small {
+            text-align: center;
+            padding: 20px;
+            color: #60a5fa;
+            font-style: italic;
+            animation: pulse 2s infinite;
+        }
+        
+        /* DIAMOND CLUB */
+        .diamond-club-section {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(139, 92, 246, 0.1));
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+        
+        .diamond-title {
+            color: #c084fc;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .diamond-subtitle {
+            color: #cbd5e1;
+            margin-bottom: 20px;
+        }
+        
+        .diamond-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        
+        .diamond-item {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .diamond-item:hover {
+            transform: scale(1.02);
+            border-color: #c084fc;
+        }
+        
+        .diamond-item-name {
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        
+        .diamond-item-stats {
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+        
+        /* DELTA VITALS */
+        .delta-vitals-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .delta-title {
+            color: #60a5fa;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .delta-subtitle {
+            color: #cbd5e1;
+            margin-bottom: 20px;
+        }
+        
+        #delta-vitals-chart-container {
+            background: rgba(255,255,255,0.03);
+            padding: 20px;
+            border-radius: 12px;
+            min-height: 400px;
+        }
     </style>
 </head>
 <body>
@@ -1047,13 +1452,27 @@
     </div>
 </div>
 
-<div class="container">
-    <h1 class="page-title">🧠 Business Intelligence</h1>
-    <p class="page-subtitle">Inteligência de Dados • Jornada do Paciente • Previsibilidade</p>
-    
-    <div id="loading" class="loading">Carregando inteligência de dados</div>
-    
-    <div id="dashboard" style="display: none;">
+<!-- TABS DE NAVEGAÇÃO -->
+<div class="tabs-container">
+    <ul class="tabs">
+        <li class="tab active" onclick="switchTab('dashboard-executivo')">
+            <span class="tab-icon">📊</span> Dashboard Executivo
+        </li>
+        <li class="tab" onclick="switchTab('central-ia')">
+            <span class="tab-icon">🧠</span> Central de Inteligência IA
+        </li>
+    </ul>
+</div>
+
+<!-- CONTEÚDO TAB 1: DASHBOARD EXECUTIVO -->
+<div id="dashboard-executivo" class="tab-content active">
+    <div class="container">
+        <h1 class="page-title">🧠 Business Intelligence</h1>
+        <p class="page-subtitle">Inteligência de Dados • Jornada do Paciente • Previsibilidade</p>
+        
+        <div id="loading" class="loading">Carregando inteligência de dados</div>
+        
+        <div id="dashboard" style="display: none;">
         <!-- CARDS DE MÉTRICAS GERAIS -->
         <div class="stats-grid">
             <div class="stat-card blue">
@@ -1343,6 +1762,101 @@
                     <p>Verifique o nome ou data de nascimento e tente novamente</p>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- FIM DO DASHBOARD EXECUTIVO -->
+</div>
+
+<!-- CONTEÚDO TAB 2: CENTRAL DE INTELIGÊNCIA IA -->
+<div id="central-ia" class="tab-content">
+    <div class="container central-ia-container">
+        <h1 class="page-title">🧠 Biocardio Intelligence Hub</h1>
+        <p class="page-subtitle">Gestão Estratégica e Clínica de Precisão</p>
+        
+        <div id="loading-ia" class="loading">Analisando histórico de exames...</div>
+        
+        <div id="central-ia-content" style="display: none;">
+            
+            <!-- CHAT INTERATIVO (ORACLE IA) -->
+            <div class="oracle-section">
+                <h2 class="oracle-title">💬 Oracle IA - Consulta Inteligente</h2>
+                <p class="oracle-subtitle">Faça perguntas sobre seus dados e receba insights estratégicos</p>
+                
+                <div class="oracle-chat">
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="chat-welcome">
+                            <div class="welcome-icon">🔮</div>
+                            <h3>Bem-vindo à Central de Inteligência Biocardio</h3>
+                            <p>Pergunte qualquer coisa sobre seus pacientes:</p>
+                            <ul class="example-questions">
+                                <li>"Quem são os hipertensos que não fazem Eco há 6 meses?"</li>
+                                <li>"Qual a média de PA dos pacientes de Cardiologia?"</li>
+                                <li>"Quais pacientes precisam de retorno urgente?"</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-container">
+                        <input type="text" id="chat-input" placeholder="Digite sua pergunta sobre os dados..." class="chat-input">
+                        <button onclick="enviarPerguntaIA()" class="btn-send-chat">🚀 Enviar</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- GRID DE INSIGHTS PROATIVOS -->
+            <div class="insights-grid">
+                <!-- CARD 1: OPORTUNIDADES DE ECOCARDIOGRAMA -->
+                <div class="insight-card insight-card-eco">
+                    <div class="insight-card-header">
+                        <div class="insight-card-icon">✨</div>
+                        <h3>Oportunidades de Ecocardiograma</h3>
+                    </div>
+                    <div class="insight-card-body" id="card-eco-oportunidades">
+                        <div class="loading-small">Calculando sinergia entre especialistas...</div>
+                    </div>
+                </div>
+                
+                <!-- CARD 2: SINERGIA MULTIDISCIPLINAR -->
+                <div class="insight-card insight-card-multi">
+                    <div class="insight-card-header">
+                        <div class="insight-card-icon">🔀</div>
+                        <h3>Sinergia Multidisciplinar</h3>
+                    </div>
+                    <div class="insight-card-body" id="card-sinergia">
+                        <div class="loading-small">Calculando sinergia entre especialistas...</div>
+                    </div>
+                </div>
+                
+                <!-- CARD 3: ALERTA DE RISCO CLÍNICO -->
+                <div class="insight-card insight-card-risco">
+                    <div class="insight-card-header">
+                        <div class="insight-card-icon">⚠️</div>
+                        <h3>Alerta de Risco Clínico</h3>
+                    </div>
+                    <div class="insight-card-body" id="card-risco">
+                        <div class="loading-small">Identificando pacientes de risco...</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- RANKING DE FIDELIDADE (DIAMOND CLUB) -->
+            <div class="diamond-club-section">
+                <h2 class="diamond-title">💎 Diamond Club - Pacientes VIP</h2>
+                <p class="diamond-subtitle">Identificação automática de pacientes fiéis e multidisciplinares</p>
+                <div id="diamond-club-list" class="diamond-list"></div>
+            </div>
+            
+            <!-- ANÁLISE DE TENDÊNCIAS (DELTA VITALS) -->
+            <div class="delta-vitals-section">
+                <h2 class="delta-title">📈 Delta Vitals - Tendências Clínicas</h2>
+                <p class="delta-subtitle">Relatório automático de melhoria ou piora dos pacientes da clínica</p>
+                <div id="delta-vitals-chart-container">
+                    <canvas id="delta-vitals-chart"></canvas>
+                </div>
+            </div>
+            
         </div>
     </div>
 </div>
@@ -2131,6 +2645,396 @@
             timeline.appendChild(item);
         });
     }
+    
+    // FUNÇÃO PARA TROCAR DE TAB
+    function switchTab(tabId) {
+        // Remover classe active de todas as tabs
+        document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        
+        // Adicionar classe active na tab clicada
+        event.target.classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+        
+        // Se for a Central IA, carregar dados
+        if (tabId === 'central-ia') {
+            carregarCentralIA();
+        }
+    }
+    
+    // ===============================================
+    // CENTRAL DE INTELIGÊNCIA IA - FUNCTIONS
+    // ===============================================
+    
+    // Carregar Central IA
+    async function carregarCentralIA() {
+        const loadingIA = document.getElementById('loading-ia');
+        const contentIA = document.getElementById('central-ia-content');
+        
+        loadingIA.style.display = 'block';
+        contentIA.style.display = 'none';
+        
+        try {
+            // Buscar TODOS os dados do Supabase
+            const { data: allData, error } = await supabaseClient
+                .from('triagens')
+                .select('*')
+                .order('data_triagem', { ascending: false });
+            
+            if (error) throw error;
+            
+            // Processar dados para análise
+            const dadosProcessados = processarDadosEstrategicos(allData);
+            
+            // Gerar Insights Proativos
+            await gerarInsightsProativos(dadosProcessados);
+            
+            // Gerar Diamond Club
+            gerarDiamondClub(dadosProcessados);
+            
+            // Gerar Delta Vitals
+            gerarDeltaVitals(dadosProcessados);
+            
+            loadingIA.style.display = 'none';
+            contentIA.style.display = 'block';
+            
+        } catch (error) {
+            console.error('Erro ao carregar Central IA:', error);
+            loadingIA.innerHTML = '❌ Erro ao carregar dados. Tente novamente.';
+        }
+    }
+    
+    // Processar dados estratégicos
+    function processarDadosEstrategicos(allData) {
+        // Agrupar por paciente
+        const pacientes = {};
+        
+        allData.forEach(atend => {
+            const nome = atend.nome_paciente;
+            if (!pacientes[nome]) {
+                pacientes[nome] = {
+                    nome: nome,
+                    totalVisitas: 0,
+                    especialidades: new Set(),
+                    ultimaVisita: null,
+                    primeiraVisita: null,
+                    historicosPA: [],
+                    fezEco: false,
+                    ultimoEco: null
+                };
+            }
+            
+            pacientes[nome].totalVisitas++;
+            if (atend.especialidade) pacientes[nome].especialidades.add(atend.especialidade);
+            if (!pacientes[nome].ultimaVisita || atend.data_triagem > pacientes[nome].ultimaVisita) {
+                pacientes[nome].ultimaVisita = atend.data_triagem;
+            }
+            if (!pacientes[nome].primeiraVisita || atend.data_triagem < pacientes[nome].primeiraVisita) {
+                pacientes[nome].primeiraVisita = atend.data_triagem;
+            }
+            if (atend.pressao_sis_esquerdo) {
+                pacientes[nome].historicosPA.push({
+                    data: atend.data_triagem,
+                    sis: atend.pressao_sis_esquerdo,
+                    dia: atend.pressao_dia_esquerdo
+                });
+            }
+            if (atend.tipo_atendimento && atend.tipo_atendimento.toLowerCase().includes('ecocardiograma')) {
+                pacientes[nome].fezEco = true;
+                pacientes[nome].ultimoEco = atend.data_triagem;
+            }
+        });
+        
+        // Converter para array
+        const pacientesArray = Object.values(pacientes).map(p => ({
+            ...p,
+            especialidades: Array.from(p.especialidades),
+            diasDesdeUltimaVisita: calcularDiasAte(p.ultimaVisita)
+        }));
+        
+        return {
+            totalPacientes: pacientesArray.length,
+            totalAtendimentos: allData.length,
+            pacientes: pacientesArray,
+            especialidades: [...new Set(allData.map(a => a.especialidade).filter(e => e))]
+        };
+    }
+    
+    // Calcular dias até hoje
+    function calcularDiasAte(data) {
+        if (!data) return null;
+        const hoje = new Date();
+        const dataObj = new Date(data);
+        const diff = Math.floor((hoje - dataObj) / (1000 * 60 * 60 * 24));
+        return diff;
+    }
+    
+    // Gerar Insights Proativos
+    async function gerarInsightsProativos(dados) {
+        // CARD 1: Oportunidades de Ecocardiograma
+        const cardEco = document.getElementById('card-eco-oportunidades');
+        const oportunidadesEco = dados.pacientes.filter(p => 
+            p.especialidades.includes('Cardiologia') && !p.fezEco
+        );
+        
+        if (oportunidadesEco.length > 0) {
+            cardEco.innerHTML = `
+                <div style="font-size: 32px; font-weight: 700; color: #10b981; margin-bottom: 10px;">
+                    ${oportunidadesEco.length}
+                </div>
+                <p style="margin-bottom: 15px;">Pacientes de Cardiologia sem Ecocardiograma registrado</p>
+                <div style="max-height: 200px; overflow-y: auto;">
+                    ${oportunidadesEco.slice(0, 5).map(p => `
+                        <div style="background: rgba(16, 185, 129, 0.1); padding: 10px; margin-bottom: 8px; border-radius: 8px; border-left: 3px solid #10b981;">
+                            <strong>${p.nome}</strong> - ${p.totalVisitas} visitas
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        } else {
+            cardEco.innerHTML = '<div style="text-align: center; padding: 20px;">✅ Todos os pacientes cardíacos já realizaram Ecocardiograma!</div>';
+        }
+        
+        // CARD 2: Sinergia Multidisciplinar
+        const cardSinergia = document.getElementById('card-sinergia');
+        const multidisciplinares = dados.pacientes.filter(p => p.especialidades.length > 1);
+        
+        if (multidisciplinares.length > 0) {
+            cardSinergia.innerHTML = `
+                <div style="font-size: 32px; font-weight: 700; color: #8b5cf6; margin-bottom: 10px;">
+                    ${multidisciplinares.length}
+                </div>
+                <p style="margin-bottom: 15px;">Pacientes em tratamento integrado (2+ especialidades)</p>
+                <div style="max-height: 200px; overflow-y: auto;">
+                    ${multidisciplinares.slice(0, 5).map(p => `
+                        <div style="background: rgba(139, 92, 246, 0.1); padding: 10px; margin-bottom: 8px; border-radius: 8px; border-left: 3px solid #8b5cf6;">
+                            <strong>${p.nome}</strong><br>
+                            <small>${p.especialidades.join(' + ')}</small>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        } else {
+            cardSinergia.innerHTML = '<div style="text-align: center; padding: 20px;">📊 Todos os pacientes estão em especialidade única</div>';
+        }
+        
+        // CARD 3: Alerta de Risco Clínico
+        const cardRisco = document.getElementById('card-risco');
+        const pacientesRisco = dados.pacientes.filter(p => {
+            const ultimaPA = p.historicosPA.length > 0 ? p.historicosPA[0] : null;
+            return ultimaPA && ultimaPA.sis >= 160 && p.diasDesdeUltimaVisita > 90;
+        });
+        
+        if (pacientesRisco.length > 0) {
+            cardRisco.innerHTML = `
+                <div style="font-size: 32px; font-weight: 700; color: #ef4444; margin-bottom: 10px;">
+                    ${pacientesRisco.length}
+                </div>
+                <p style="margin-bottom: 15px;">Pacientes hipertensos (PA > 160/100) sem retorno há 3+ meses</p>
+                <div style="max-height: 200px; overflow-y: auto;">
+                    ${pacientesRisco.slice(0, 5).map(p => {
+                        const ultimaPA = p.historicosPA[0];
+                        return `
+                            <div style="background: rgba(239, 68, 68, 0.1); padding: 10px; margin-bottom: 8px; border-radius: 8px; border-left: 3px solid #ef4444;">
+                                <strong>${p.nome}</strong><br>
+                                <small>PA: ${ultimaPA.sis}×${ultimaPA.dia} mmHg • ${p.diasDesdeUltimaVisita} dias</small>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        } else {
+            cardRisco.innerHTML = '<div style="text-align: center; padding: 20px;">✅ Nenhum paciente de alto risco identificado!</div>';
+        }
+    }
+    
+    // Gerar Diamond Club
+    function gerarDiamondClub(dados) {
+        const diamondList = document.getElementById('diamond-club-list');
+        
+        // Pacientes Diamante: 5+ visitas E 2+ especialidades
+        const diamantes = dados.pacientes
+            .filter(p => p.totalVisitas >= 5 || p.especialidades.length >= 2)
+            .sort((a, b) => b.totalVisitas - a.totalVisitas)
+            .slice(0, 10);
+        
+        if (diamantes.length > 0) {
+            diamondList.innerHTML = diamantes.map(p => `
+                <div class="diamond-item">
+                    <div class="diamond-item-name">💎 ${p.nome}</div>
+                    <div class="diamond-item-stats">
+                        ${p.totalVisitas} visitas • ${p.especialidades.join(' + ')}
+                        ${p.especialidades.length > 1 ? ' • 🔀 Multidisciplinar' : ''}
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            diamondList.innerHTML = '<div style="text-align: center; padding: 20px; color: #cbd5e1;">Nenhum paciente VIP identificado ainda</div>';
+        }
+    }
+    
+    // Gerar Delta Vitals (Tendências)
+    function gerarDeltaVitals(dados) {
+        // Calcular média de PA por mês
+        const pasPorMes = {};
+        dados.pacientes.forEach(p => {
+            p.historicosPA.forEach(pa => {
+                const mes = pa.data.substring(0, 7); // YYYY-MM
+                if (!pasPorMes[mes]) pasPorMes[mes] = { total: 0, count: 0 };
+                pasPorMes[mes].total += pa.sis;
+                pasPorMes[mes].count++;
+            });
+        });
+        
+        const meses = Object.keys(pasPorMes).sort();
+        const medias = meses.map(mes => (pasPorMes[mes].total / pasPorMes[mes].count).toFixed(1));
+        
+        // Criar gráfico
+        const ctx = document.getElementById('delta-vitals-chart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: meses.map(m => {
+                        const [ano, mes] = m.split('-');
+                        return `${mes}/${ano}`;
+                    }),
+                    datasets: [{
+                        label: 'Pressão Arterial Sistólica Média',
+                        data: medias,
+                        borderColor: '#60a5fa',
+                        backgroundColor: 'rgba(96, 165, 250, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#e2e8f0' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { color: '#cbd5e1' },
+                            grid: { color: 'rgba(255,255,255,0.1)' }
+                        },
+                        x: {
+                            ticks: { color: '#cbd5e1' },
+                            grid: { color: 'rgba(255,255,255,0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+    }
+    
+    // Enviar pergunta para Oracle IA
+    async function enviarPerguntaIA() {
+        const input = document.getElementById('chat-input');
+        const pergunta = input.value.trim();
+        
+        if (!pergunta) {
+            alert('Por favor, digite uma pergunta');
+            return;
+        }
+        
+        const chatMessages = document.getElementById('chat-messages');
+        
+        // Adicionar mensagem do usuário
+        const userMsg = document.createElement('div');
+        userMsg.className = 'chat-message user';
+        userMsg.innerHTML = `
+            <div class="chat-bubble user">${pergunta}</div>
+            <div class="chat-avatar user">👤</div>
+        `;
+        chatMessages.appendChild(userMsg);
+        
+        // Limpar input
+        input.value = '';
+        
+        // Adicionar mensagem de loading da IA
+        const aiLoadingMsg = document.createElement('div');
+        aiLoadingMsg.className = 'chat-message ai';
+        aiLoadingMsg.innerHTML = `
+            <div class="chat-avatar ai">🤖</div>
+            <div class="chat-bubble ai">Analisando dados...</div>
+        `;
+        chatMessages.appendChild(aiLoadingMsg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        try {
+            // Buscar dados completos
+            const { data: allData, error } = await supabaseClient
+                .from('triagens')
+                .select('*');
+            
+            if (error) throw error;
+            
+            const dadosProcessados = processarDadosEstrategicos(allData);
+            
+            // Enviar para Netlify Function
+            const response = await fetch('/.netlify/functions/ia-estrategica', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    pergunta: pergunta,
+                    dadosCompletos: {
+                        totalPacientes: dadosProcessados.totalPacientes,
+                        totalAtendimentos: dadosProcessados.totalAtendimentos,
+                        especialidades: dadosProcessados.especialidades,
+                        pacientes: dadosProcessados.pacientes.slice(0, 50).map(p => ({
+                            nome: p.nome,
+                            totalVisitas: p.totalVisitas,
+                            especialidades: p.especialidades,
+                            ultimaPA: p.historicosPA[0] ? `${p.historicosPA[0].sis}×${p.historicosPA[0].dia}` : null,
+                            ultimoEco: p.ultimoEco
+                        }))
+                    }
+                })
+            });
+            
+            const data = await response.json();
+            
+            // Remover loading
+            aiLoadingMsg.remove();
+            
+            // Adicionar resposta da IA
+            const aiMsg = document.createElement('div');
+            aiMsg.className = 'chat-message ai';
+            aiMsg.innerHTML = `
+                <div class="chat-avatar ai">🤖</div>
+                <div class="chat-bubble ai">${data.resposta || 'Não foi possível gerar resposta.'}</div>
+            `;
+            chatMessages.appendChild(aiMsg);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+        } catch (error) {
+            console.error('Erro ao consultar Oracle IA:', error);
+            aiLoadingMsg.remove();
+            const errorMsg = document.createElement('div');
+            errorMsg.className = 'chat-message ai';
+            errorMsg.innerHTML = `
+                <div class="chat-avatar ai">🤖</div>
+                <div class="chat-bubble ai">❌ Erro ao processar pergunta. Tente novamente.</div>
+            `;
+            chatMessages.appendChild(errorMsg);
+        }
+    }
+    
+    // Permitir Enter para enviar
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatInput = document.getElementById('chat-input');
+        if (chatInput) {
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    enviarPerguntaIA();
+                }
+            });
+        }
+    });
     
     // Carregar dados ao abrir a página
     window.onload = function() {
