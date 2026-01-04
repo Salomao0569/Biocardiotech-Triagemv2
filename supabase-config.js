@@ -16,13 +16,11 @@
 // ============================================
 
 const SUPABASE_CONFIG = {
-    // Substitua pela sua URL do projeto
-    // Sua URL é: https://tsaxwxchxhbvmotkxonq.supabase.co
-    url: 'SUA_URL_DO_SUPABASE_AQUI',
+    // URL do projeto Supabase
+    url: 'https://tsaxwxchxhbvmotkxonq.supabase.co',
     
-    // Substitua pela sua chave anon/public
-    // Encontre em: Settings > API > Project API keys > anon public
-    anonKey: 'SUA_CHAVE_ANON_AQUI'
+    // Chave anon/public para acesso ao banco
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRzYXh3eGNoeGhidm1vdGt4b25xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc0NzgxMzUsImV4cCI6MjA4MzA1NDEzNX0.bIfHNQest_rYd5FUJrAdbw8ne136td9Hjh4-vpmlSKw'
 };
 
 // ============================================
