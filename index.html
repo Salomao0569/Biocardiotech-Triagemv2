@@ -11,6 +11,10 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    
     <style>
         /* --- RESET E GERAL --- */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -226,8 +230,131 @@
         .btn-print { background-color: #c8102e; color: white; }
         .btn-print:active { background-color: #a00d25; transform: scale(0.98); }
         
+        .btn-save { background-color: #003d7a; color: white; }
+        .btn-save:active { background-color: #002850; transform: scale(0.98); }
+        
+        .btn-history { background-color: #28a745; color: white; }
+        .btn-history:active { background-color: #218838; transform: scale(0.98); }
+        
         .btn-clear { background-color: #6c757d; color: white; }
         .btn-clear:active { background-color: #545b62; transform: scale(0.98); }
+
+        /* --- MENSAGEM DE STATUS --- */
+        .status-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .status-success { background-color: #28a745; color: white; }
+        .status-error { background-color: #dc3545; color: white; }
+        .status-info { background-color: #17a2b8; color: white; }
+        
+        /* --- MODAL DE HISTÓRICO --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            overflow: auto;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: auto;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 1200px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            animation: modalSlide 0.3s ease;
+        }
+        
+        @keyframes modalSlide {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #c8102e;
+        }
+        
+        .modal-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #003d7a;
+        }
+        
+        .close {
+            color: #999;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: 0.2s;
+        }
+        
+        .close:hover { color: #c8102e; }
+        
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .history-table th {
+            background-color: #003d7a;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .history-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #ddd;
+            font-size: 13px;
+        }
+        
+        .history-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-style: italic;
+        }
 
         /* --- RODAPÉ MINIMALISTA --- */
         .footer {
@@ -531,11 +658,29 @@
     </div>
 
     <div class="buttons">
+        <button class="btn-save" onclick="salvarTriagem()">💾 Salvar no Banco</button>
+        <button class="btn-history" onclick="abrirHistorico()">📋 Ver Histórico</button>
         <button class="btn-print" onclick="window.print()">🖨️ Salvar PDF / Imprimir</button>
         <button class="btn-clear" onclick="limpar()">🗑️ Limpar Dados</button>
     </div>
 
     <div class="footer"></div>
+</div>
+
+<!-- Mensagem de Status -->
+<div id="statusMessage" class="status-message"></div>
+
+<!-- Modal de Histórico -->
+<div id="historyModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="modal-title">📋 Histórico de Triagens</span>
+            <span class="close" onclick="fecharHistorico()">&times;</span>
+        </div>
+        <div id="historyContent">
+            <div class="no-data">Carregando...</div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -613,6 +758,235 @@
             document.getElementById('imc-result').innerText = "--";
             setDateTime(); // Restaura a data de hoje
             window.scrollTo(0, 0);
+        }
+    }
+
+    // ============================================
+    // INTEGRAÇÃO COM SUPABASE
+    // ============================================
+    
+    // Inicializar cliente Supabase
+    let supabaseClient = null;
+    
+    function inicializarSupabase() {
+        if (typeof supabase === 'undefined') {
+            console.error('Supabase SDK não carregado');
+            return false;
+        }
+        
+        if (!SUPABASE_CONFIG || !SUPABASE_CONFIG.url || !SUPABASE_CONFIG.anonKey) {
+            console.error('Configuração do Supabase não encontrada');
+            return false;
+        }
+        
+        if (SUPABASE_CONFIG.url === 'SUA_URL_DO_SUPABASE_AQUI') {
+            mostrarMensagem('⚠️ Configure o Supabase primeiro! Veja o arquivo supabase-config.js', 'error', 5000);
+            return false;
+        }
+        
+        try {
+            supabaseClient = supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+            return true;
+        } catch (error) {
+            console.error('Erro ao inicializar Supabase:', error);
+            return false;
+        }
+    }
+    
+    // Mostrar mensagem de status
+    function mostrarMensagem(texto, tipo = 'info', duracao = 3000) {
+        const msgEl = document.getElementById('statusMessage');
+        msgEl.textContent = texto;
+        msgEl.className = `status-message status-${tipo}`;
+        msgEl.style.display = 'block';
+        
+        setTimeout(() => {
+            msgEl.style.display = 'none';
+        }, duracao);
+    }
+    
+    // Validar dados do formulário
+    function validarDados() {
+        const nome = document.getElementById('nome').value.trim();
+        
+        if (!nome) {
+            mostrarMensagem('❌ Nome do paciente é obrigatório!', 'error');
+            document.getElementById('nome').focus();
+            return false;
+        }
+        
+        return true;
+    }
+    
+    // Coletar dados do formulário
+    function coletarDados() {
+        const imcText = document.getElementById('imc-result').innerText;
+        const imcValue = imcText === '--' ? null : parseFloat(imcText);
+        
+        return {
+            nome_paciente: document.getElementById('nome').value.trim(),
+            data_nascimento: document.getElementById('nascimento').value || null,
+            idade: document.getElementById('idade').value || null,
+            data_triagem: document.getElementById('data').value || null,
+            hora_triagem: document.getElementById('hora').value || null,
+            pressao_sis_esquerdo: parseInt(document.getElementById('sis_esq').value) || null,
+            pressao_dia_esquerdo: parseInt(document.getElementById('dia_esq').value) || null,
+            pressao_sis_direito: parseInt(document.getElementById('sis_dir').value) || null,
+            pressao_dia_direito: parseInt(document.getElementById('dia_dir').value) || null,
+            frequencia_cardiaca: parseInt(document.getElementById('fc').value) || null,
+            saturacao_oxigenio: parseInt(document.getElementById('spo2').value) || null,
+            altura_cm: parseFloat(document.getElementById('altura').value) || null,
+            peso_kg: parseFloat(document.getElementById('peso').value) || null,
+            imc: imcValue
+        };
+    }
+    
+    // Salvar triagem no banco
+    async function salvarTriagem() {
+        // Validar dados
+        if (!validarDados()) {
+            return;
+        }
+        
+        // Inicializar Supabase se necessário
+        if (!supabaseClient && !inicializarSupabase()) {
+            return;
+        }
+        
+        // Coletar dados
+        const dados = coletarDados();
+        
+        // Mostrar mensagem de carregamento
+        mostrarMensagem('💾 Salvando...', 'info', 10000);
+        
+        try {
+            // Inserir no banco
+            const { data, error } = await supabaseClient
+                .from('triagens')
+                .insert([dados])
+                .select();
+            
+            if (error) {
+                throw error;
+            }
+            
+            mostrarMensagem('✅ Triagem salva com sucesso!', 'success');
+            console.log('Dados salvos:', data);
+            
+        } catch (error) {
+            console.error('Erro ao salvar:', error);
+            
+            if (error.message.includes('relation "triagens" does not exist')) {
+                mostrarMensagem('❌ Tabela não criada! Execute o SQL no Supabase primeiro.', 'error', 5000);
+            } else {
+                mostrarMensagem('❌ Erro ao salvar: ' + error.message, 'error', 5000);
+            }
+        }
+    }
+    
+    // Abrir modal de histórico
+    async function abrirHistorico() {
+        // Inicializar Supabase se necessário
+        if (!supabaseClient && !inicializarSupabase()) {
+            return;
+        }
+        
+        const modal = document.getElementById('historyModal');
+        const content = document.getElementById('historyContent');
+        
+        modal.style.display = 'block';
+        content.innerHTML = '<div class="no-data">Carregando...</div>';
+        
+        try {
+            // Buscar últimas 50 triagens
+            const { data, error } = await supabaseClient
+                .from('triagens')
+                .select('*')
+                .order('criado_em', { ascending: false })
+                .limit(50);
+            
+            if (error) {
+                throw error;
+            }
+            
+            if (!data || data.length === 0) {
+                content.innerHTML = '<div class="no-data">Nenhuma triagem encontrada.</div>';
+                return;
+            }
+            
+            // Montar tabela
+            let html = `
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Hora</th>
+                            <th>Paciente</th>
+                            <th>Idade</th>
+                            <th>PA (Esq)</th>
+                            <th>PA (Dir)</th>
+                            <th>FC</th>
+                            <th>SpO₂</th>
+                            <th>IMC</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            data.forEach(item => {
+                const dataTriagem = item.data_triagem ? new Date(item.data_triagem).toLocaleDateString('pt-BR') : '-';
+                const horaTriagem = item.hora_triagem || '-';
+                const paEsq = item.pressao_sis_esquerdo && item.pressao_dia_esquerdo 
+                    ? `${item.pressao_sis_esquerdo}×${item.pressao_dia_esquerdo}` : '-';
+                const paDir = item.pressao_sis_direito && item.pressao_dia_direito 
+                    ? `${item.pressao_sis_direito}×${item.pressao_dia_direito}` : '-';
+                const fc = item.frequencia_cardiaca || '-';
+                const spo2 = item.saturacao_oxigenio ? `${item.saturacao_oxigenio}%` : '-';
+                const imc = item.imc ? item.imc.toFixed(1) : '-';
+                
+                html += `
+                    <tr>
+                        <td>${dataTriagem}</td>
+                        <td>${horaTriagem}</td>
+                        <td><strong>${item.nome_paciente}</strong></td>
+                        <td>${item.idade || '-'}</td>
+                        <td>${paEsq}</td>
+                        <td>${paDir}</td>
+                        <td>${fc}</td>
+                        <td>${spo2}</td>
+                        <td>${imc}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                    </tbody>
+                </table>
+            `;
+            
+            content.innerHTML = html;
+            
+        } catch (error) {
+            console.error('Erro ao carregar histórico:', error);
+            
+            if (error.message.includes('relation "triagens" does not exist')) {
+                content.innerHTML = '<div class="no-data">❌ Tabela não criada! Execute o SQL no Supabase primeiro.</div>';
+            } else {
+                content.innerHTML = `<div class="no-data">❌ Erro ao carregar: ${error.message}</div>`;
+            }
+        }
+    }
+    
+    // Fechar modal
+    function fecharHistorico() {
+        document.getElementById('historyModal').style.display = 'none';
+    }
+    
+    // Fechar modal ao clicar fora
+    window.onclick = function(event) {
+        const modal = document.getElementById('historyModal');
+        if (event.target === modal) {
+            fecharHistorico();
         }
     }
 </script>

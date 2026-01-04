@@ -11,3 +11,6 @@
 # OS files
 Thumbs.db
 
+# Não commitar arquivo de config com credenciais reais
+# (descomente a linha abaixo se quiser proteger suas credenciais)
+# supabase-config.js
