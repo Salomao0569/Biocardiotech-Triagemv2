@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Clínica Biocardio</title>
+    <title>Dashboard de Gestão - Clínica Biocardio</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -156,68 +156,107 @@
             margin-top: 8px;
         }
         
-        /* GRÁFICOS */
-        .charts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-        
-        .chart-container {
+        /* TABELA DE PRODUÇÃO */
+        .production-section {
             background: white;
-            border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-        }
-        
-        .chart-title {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 18px;
-            font-weight: 700;
-            color: #003d7a;
-            margin-bottom: 20px;
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .chart-wrapper {
-            position: relative;
-            height: 300px;
-        }
-        
-        /* INDICADOR DE PA MÉDIA */
-        .pa-indicator {
-            background: linear-gradient(135deg, #003d7a 0%, #002850 100%);
-            color: white;
             border-radius: 16px;
             padding: 40px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-            text-align: center;
+            margin-bottom: 40px;
         }
         
-        .pa-indicator-title {
+        .section-title {
             font-family: 'Montserrat', sans-serif;
-            font-size: 18px;
+            font-size: 24px;
             font-weight: 700;
-            margin-bottom: 20px;
+            color: #003d7a;
+            margin-bottom: 30px;
+            text-align: center;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
         
-        .pa-indicator-value {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 64px;
-            font-weight: 800;
-            color: #c8102e;
-            line-height: 1;
-            margin-bottom: 10px;
+        .production-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 auto;
         }
         
-        .pa-indicator-label {
+        .production-table thead {
+            background: linear-gradient(135deg, #003d7a 0%, #002850 100%);
+            color: white;
+        }
+        
+        .production-table th {
+            padding: 20px;
+            text-align: center;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .production-table th:first-child {
+            text-align: left;
+            padding-left: 30px;
+        }
+        
+        .production-table tbody tr {
+            border-bottom: 1px solid #e0e0e0;
+            transition: background-color 0.3s;
+        }
+        
+        .production-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .production-table tbody tr:last-child {
+            border-bottom: none;
+        }
+        
+        .production-table td {
+            padding: 25px 20px;
+            text-align: center;
+        }
+        
+        .production-table td:first-child {
+            text-align: left;
+            padding-left: 30px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
             font-size: 16px;
-            opacity: 0.9;
+            color: #333;
+        }
+        
+        .production-value {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            color: #003d7a;
+            line-height: 1;
+        }
+        
+        .production-label {
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            margin-top: 5px;
+            letter-spacing: 0.5px;
+        }
+        
+        /* GRÁFICO DE BARRAS */
+        .chart-section {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
         }
         
         /* LOADING */
@@ -241,10 +280,6 @@
         
         /* RESPONSIVO */
         @media (max-width: 768px) {
-            .charts-grid {
-                grid-template-columns: 1fr;
-            }
-            
             .header-content {
                 flex-direction: column;
                 text-align: center;
@@ -267,8 +302,21 @@
                 font-size: 36px;
             }
             
-            .pa-indicator-value {
-                font-size: 48px;
+            .production-table {
+                font-size: 14px;
+            }
+            
+            .production-table th,
+            .production-table td {
+                padding: 15px 10px;
+            }
+            
+            .production-value {
+                font-size: 24px;
+            }
+            
+            .chart-wrapper {
+                height: 300px;
             }
         }
     </style>
@@ -288,7 +336,7 @@
 </div>
 
 <div class="container">
-    <h1 class="page-title">📊 Dashboard de Triagens</h1>
+    <h1 class="page-title">📊 Dashboard de Gestão</h1>
     
     <div id="loading" class="loading">Carregando dados</div>
     
@@ -304,50 +352,94 @@
             
             <div class="stat-card red">
                 <div class="stat-card-icon">📆</div>
+                <div class="stat-card-title">Atendimentos Esta Semana</div>
+                <div class="stat-card-value" id="stat-semana">0</div>
+                <div class="stat-card-subtitle">Triagens nesta semana</div>
+            </div>
+            
+            <div class="stat-card green">
+                <div class="stat-card-icon">📊</div>
                 <div class="stat-card-title">Atendimentos Este Mês</div>
                 <div class="stat-card-value" id="stat-mes">0</div>
                 <div class="stat-card-subtitle">Triagens no mês atual</div>
             </div>
             
-            <div class="stat-card green">
-                <div class="stat-card-icon">📊</div>
+            <div class="stat-card orange">
+                <div class="stat-card-icon">📈</div>
                 <div class="stat-card-title">Atendimentos Este Ano</div>
                 <div class="stat-card-value" id="stat-ano">0</div>
                 <div class="stat-card-subtitle">Triagens no ano atual</div>
             </div>
-            
-            <div class="stat-card orange">
-                <div class="stat-card-icon">👥</div>
-                <div class="stat-card-title">Total de Pacientes</div>
-                <div class="stat-card-value" id="stat-pacientes">0</div>
-                <div class="stat-card-subtitle">Pacientes únicos</div>
-            </div>
         </div>
         
-        <!-- GRÁFICOS -->
-        <div class="charts-grid">
-            <!-- Gráfico de Pizza: Especialidades -->
-            <div class="chart-container">
-                <h3 class="chart-title">🏥 Atendimentos por Especialidade</h3>
-                <div class="chart-wrapper">
-                    <canvas id="chartEspecialidade"></canvas>
-                </div>
-            </div>
-            
-            <!-- Gráfico de Barras: Faixa Etária e Sexo -->
-            <div class="chart-container">
-                <h3 class="chart-title">👥 Distribuição por Faixa Etária e Sexo</h3>
-                <div class="chart-wrapper">
-                    <canvas id="chartFaixaEtaria"></canvas>
-                </div>
-            </div>
+        <!-- TABELA DE PRODUÇÃO POR ESPECIALIDADE -->
+        <div class="production-section">
+            <h2 class="section-title">📋 Matriz de Produção por Especialidade</h2>
+            <table class="production-table">
+                <thead>
+                    <tr>
+                        <th>Especialidade</th>
+                        <th>Hoje</th>
+                        <th>Esta Semana</th>
+                        <th>Este Mês</th>
+                    </tr>
+                </thead>
+                <tbody id="production-tbody">
+                    <tr>
+                        <td>Cardiologia</td>
+                        <td>
+                            <div class="production-value" id="cardio-hoje">0</div>
+                            <div class="production-label">atendimentos</div>
+                        </td>
+                        <td>
+                            <div class="production-value" id="cardio-semana">0</div>
+                            <div class="production-label">atendimentos</div>
+                        </td>
+                        <td>
+                            <div class="production-value" id="cardio-mes">0</div>
+                            <div class="production-label">atendimentos</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Endocrinologia</td>
+                        <td>
+                            <div class="production-value" id="endo-hoje">0</div>
+                            <div class="production-label">atendimentos</div>
+                        </td>
+                        <td>
+                            <div class="production-value" id="endo-semana">0</div>
+                            <div class="production-label">atendimentos</div>
+                        </td>
+                        <td>
+                            <div class="production-value" id="endo-mes">0</div>
+                            <div class="production-label">atendimentos</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Cirurgia Vascular</td>
+                        <td>
+                            <div class="production-value" id="vascular-hoje">0</div>
+                            <div class="production-label">atendimentos</div>
+                        </td>
+                        <td>
+                            <div class="production-value" id="vascular-semana">0</div>
+                            <div class="production-label">atendimentos</div>
+                        </td>
+                        <td>
+                            <div class="production-value" id="vascular-mes">0</div>
+                            <div class="production-label">atendimentos</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
         
-        <!-- Indicador de PA Média -->
-        <div class="pa-indicator">
-            <div class="pa-indicator-title">💓 Pressão Arterial Média</div>
-            <div class="pa-indicator-value" id="pa-media">--/--</div>
-            <div class="pa-indicator-label">mmHg (Sistólica/Diastólica)</div>
+        <!-- GRÁFICO DE BARRAS: DISTRIBUIÇÃO POR FAIXA ETÁRIA -->
+        <div class="chart-section">
+            <h2 class="section-title">👥 Distribuição por Faixa Etária e Sexo</h2>
+            <div class="chart-wrapper">
+                <canvas id="chartFaixaEtaria"></canvas>
+            </div>
         </div>
     </div>
 </div>
@@ -355,7 +447,6 @@
 <script>
     // Variáveis globais
     let supabaseClient = null;
-    let chartEspecialidade = null;
     let chartFaixaEtaria = null;
     
     // Inicializar Supabase
@@ -384,6 +475,27 @@
         }
     }
     
+    // Obter início da semana (Segunda-feira)
+    function getStartOfWeek() {
+        const now = new Date();
+        const day = now.getDay();
+        const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Ajusta para segunda-feira
+        const monday = new Date(now.setDate(diff));
+        monday.setHours(0, 0, 0, 0);
+        return monday.toISOString().split('T')[0];
+    }
+    
+    // Obter data de hoje
+    function getToday() {
+        return new Date().toISOString().split('T')[0];
+    }
+    
+    // Obter início do mês
+    function getStartOfMonth() {
+        const now = new Date();
+        return new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+    }
+    
     // Carregar dados do dashboard
     async function carregarDados() {
         if (!supabaseClient && !inicializarSupabase()) {
@@ -394,46 +506,70 @@
         document.getElementById('dashboard').style.display = 'none';
         
         try {
-            // Buscar estatísticas gerais
-            const { data: stats, error: statsError } = await supabaseClient
-                .from('estatisticas_triagens')
-                .select('*')
-                .single();
+            const hoje = getToday();
+            const inicioSemana = getStartOfWeek();
+            const inicioMes = getStartOfMonth();
+            const inicioAno = new Date().getFullYear() + '-01-01';
             
-            if (statsError) throw statsError;
-            
-            // Atualizar cards de estatísticas
-            document.getElementById('stat-hoje').innerText = stats.triagens_hoje || 0;
-            document.getElementById('stat-mes').innerText = stats.triagens_mes || 0;
-            document.getElementById('stat-ano').innerText = stats.triagens_ano || 0;
-            document.getElementById('stat-pacientes').innerText = stats.total_pacientes || 0;
-            
-            // Atualizar PA média
-            const paSis = stats.pa_sistolica_media || '--';
-            const paDia = stats.pa_diastolica_media || '--';
-            document.getElementById('pa-media').innerText = `${paSis}/${paDia}`;
-            
-            // Buscar dados para gráfico de especialidade
-            const { data: especialidades, error: espError } = await supabaseClient
+            // Buscar todos os dados
+            const { data: allData, error: allError } = await supabaseClient
                 .from('triagens')
-                .select('especialidade');
+                .select('especialidade, data_triagem');
             
-            if (espError) throw espError;
+            if (allError) throw allError;
             
-            // Contar especialidades
-            const countEsp = {
-                'Cardiologia': 0,
-                'Endocrinologia': 0
+            // Contadores gerais
+            let countHoje = 0;
+            let countSemana = 0;
+            let countMes = 0;
+            let countAno = 0;
+            
+            // Contadores por especialidade
+            const production = {
+                'Cardiologia': { hoje: 0, semana: 0, mes: 0 },
+                'Endocrinologia': { hoje: 0, semana: 0, mes: 0 },
+                'Cirurgia Vascular': { hoje: 0, semana: 0, mes: 0 }
             };
             
-            especialidades.forEach(item => {
-                if (item.especialidade && countEsp.hasOwnProperty(item.especialidade)) {
-                    countEsp[item.especialidade]++;
+            // Processar dados
+            allData.forEach(item => {
+                const dataTriagem = item.data_triagem;
+                const especialidade = item.especialidade;
+                
+                if (!dataTriagem) return;
+                
+                // Contadores gerais
+                if (dataTriagem === hoje) countHoje++;
+                if (dataTriagem >= inicioSemana) countSemana++;
+                if (dataTriagem >= inicioMes) countMes++;
+                if (dataTriagem >= inicioAno) countAno++;
+                
+                // Contadores por especialidade
+                if (especialidade && production[especialidade]) {
+                    if (dataTriagem === hoje) production[especialidade].hoje++;
+                    if (dataTriagem >= inicioSemana) production[especialidade].semana++;
+                    if (dataTriagem >= inicioMes) production[especialidade].mes++;
                 }
             });
             
-            // Criar gráfico de pizza
-            criarGraficoPizza(countEsp);
+            // Atualizar cards de estatísticas
+            document.getElementById('stat-hoje').innerText = countHoje;
+            document.getElementById('stat-semana').innerText = countSemana;
+            document.getElementById('stat-mes').innerText = countMes;
+            document.getElementById('stat-ano').innerText = countAno;
+            
+            // Atualizar tabela de produção
+            document.getElementById('cardio-hoje').innerText = production['Cardiologia'].hoje;
+            document.getElementById('cardio-semana').innerText = production['Cardiologia'].semana;
+            document.getElementById('cardio-mes').innerText = production['Cardiologia'].mes;
+            
+            document.getElementById('endo-hoje').innerText = production['Endocrinologia'].hoje;
+            document.getElementById('endo-semana').innerText = production['Endocrinologia'].semana;
+            document.getElementById('endo-mes').innerText = production['Endocrinologia'].mes;
+            
+            document.getElementById('vascular-hoje').innerText = production['Cirurgia Vascular'].hoje;
+            document.getElementById('vascular-semana').innerText = production['Cirurgia Vascular'].semana;
+            document.getElementById('vascular-mes').innerText = production['Cirurgia Vascular'].mes;
             
             // Buscar dados de faixa etária
             const { data: faixasEtarias, error: faixaError } = await supabaseClient
@@ -453,57 +589,6 @@
             console.error('Erro ao carregar dados:', error);
             document.getElementById('loading').innerHTML = '❌ Erro ao carregar dados: ' + error.message;
         }
-    }
-    
-    // Criar gráfico de pizza (Especialidades)
-    function criarGraficoPizza(dados) {
-        const ctx = document.getElementById('chartEspecialidade');
-        
-        // Destruir gráfico anterior se existir
-        if (chartEspecialidade) {
-            chartEspecialidade.destroy();
-        }
-        
-        chartEspecialidade = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Cardiologia', 'Endocrinologia'],
-                datasets: [{
-                    data: [dados.Cardiologia, dados.Endocrinologia],
-                    backgroundColor: ['#003d7a', '#c8102e'],
-                    borderWidth: 2,
-                    borderColor: '#fff'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            font: {
-                                family: 'Montserrat',
-                                size: 14,
-                                weight: '600'
-                            },
-                            padding: 20
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                const label = context.label || '';
-                                const value = context.parsed || 0;
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                                return `${label}: ${value} (${percentage}%)`;
-                            }
-                        }
-                    }
-                }
-            }
-        });
     }
     
     // Criar gráfico de barras (Faixa Etária e Sexo)
@@ -562,7 +647,7 @@
                         ticks: {
                             font: {
                                 family: 'Montserrat',
-                                size: 11
+                                size: 12
                             }
                         }
                     },
@@ -607,4 +692,3 @@
 
 </body>
 </html>
-
