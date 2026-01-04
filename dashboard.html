@@ -1448,6 +1448,7 @@
         <div class="header-nav">
             <a href="index.html" class="btn-nav">📋 Nova Triagem</a>
             <button class="btn-nav" onclick="carregarDados()">🔄 Atualizar</button>
+            <button class="btn-nav" onclick="irParaCentralIA()" style="background: linear-gradient(135deg, #8b5cf6, #6366f1); border-color: #8b5cf6;">🧠 Central IA</button>
         </div>
     </div>
 </div>
@@ -2653,13 +2654,38 @@
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
         
         // Adicionar classe active na tab clicada
-        event.target.classList.add('active');
+        if (event && event.target) {
+            event.target.classList.add('active');
+        }
         document.getElementById(tabId).classList.add('active');
         
         // Se for a Central IA, carregar dados
         if (tabId === 'central-ia') {
             carregarCentralIA();
         }
+    }
+    
+    // FUNÇÃO PARA IR DIRETO PARA CENTRAL IA (BOTÃO NO HEADER)
+    function irParaCentralIA() {
+        // Scroll para o topo
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        // Aguardar scroll e trocar tab
+        setTimeout(() => {
+            // Remover todas as classes active
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Ativar tab da Central IA
+            const tabIA = document.querySelectorAll('.tab')[1]; // Segunda tab
+            if (tabIA) tabIA.classList.add('active');
+            
+            const contentIA = document.getElementById('central-ia');
+            if (contentIA) {
+                contentIA.classList.add('active');
+                carregarCentralIA();
+            }
+        }, 300);
     }
     
     // ===============================================
