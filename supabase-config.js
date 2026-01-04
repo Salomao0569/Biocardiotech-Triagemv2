@@ -17,9 +17,11 @@
 
 const SUPABASE_CONFIG = {
     // Substitua pela sua URL do projeto
+    // Sua URL é: https://tsaxwxchxhbvmotkxonq.supabase.co
     url: 'SUA_URL_DO_SUPABASE_AQUI',
     
     // Substitua pela sua chave anon/public
+    // Encontre em: Settings > API > Project API keys > anon public
     anonKey: 'SUA_CHAVE_ANON_AQUI'
 };
 
