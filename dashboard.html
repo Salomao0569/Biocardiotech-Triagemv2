@@ -2763,10 +2763,19 @@
     
     // Processar dados estratégicos
     function processarDadosEstrategicos(allData) {
+        // Calcular data de hoje
+        const hoje = new Date().toISOString().split('T')[0];
+        
         // Agrupar por paciente
         const pacientes = {};
+        let atendimentosHoje = 0;
         
         allData.forEach(atend => {
+            // Contar atendimentos de hoje
+            if (atend.data_triagem === hoje) {
+                atendimentosHoje++;
+            }
+            
             const nome = atend.nome_paciente;
             if (!pacientes[nome]) {
                 pacientes[nome] = {
@@ -2777,11 +2786,18 @@
                     primeiraVisita: null,
                     historicosPA: [],
                     fezEco: false,
-                    ultimoEco: null
+                    ultimoEco: null,
+                    atendimentosHoje: 0
                 };
             }
             
             pacientes[nome].totalVisitas++;
+            
+            // Marcar se o paciente foi atendido hoje
+            if (atend.data_triagem === hoje) {
+                pacientes[nome].atendimentosHoje++;
+            }
+            
             if (atend.especialidade) pacientes[nome].especialidades.add(atend.especialidade);
             if (!pacientes[nome].ultimaVisita || atend.data_triagem > pacientes[nome].ultimaVisita) {
                 pacientes[nome].ultimaVisita = atend.data_triagem;
@@ -2812,6 +2828,7 @@
         return {
             totalPacientes: pacientesArray.length,
             totalAtendimentos: allData.length,
+            atendimentosHoje: atendimentosHoje,
             pacientes: pacientesArray,
             especialidades: [...new Set(allData.map(a => a.especialidade).filter(e => e))]
         };
@@ -3041,13 +3058,17 @@
                     dadosCompletos: {
                         totalPacientes: dadosProcessados.totalPacientes,
                         totalAtendimentos: dadosProcessados.totalAtendimentos,
+                        atendimentosHoje: dadosProcessados.atendimentosHoje,
                         especialidades: dadosProcessados.especialidades,
                         pacientes: dadosProcessados.pacientes.slice(0, 50).map(p => ({
                             nome: p.nome,
                             totalVisitas: p.totalVisitas,
+                            atendimentosHoje: p.atendimentosHoje,
                             especialidades: p.especialidades,
                             ultimaPA: p.historicosPA[0] ? `${p.historicosPA[0].sis}×${p.historicosPA[0].dia}` : null,
-                            ultimoEco: p.ultimoEco
+                            ultimoEco: p.ultimoEco,
+                            ultimaVisita: p.ultimaVisita,
+                            diasDesdeUltimaVisita: p.diasDesdeUltimaVisita
                         }))
                     }
                 })
