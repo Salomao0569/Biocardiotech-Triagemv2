@@ -2765,15 +2765,20 @@
     function processarDadosEstrategicos(allData) {
         // Calcular data de hoje
         const hoje = new Date().toISOString().split('T')[0];
+        console.log('🔍 [IA Debug] Data de hoje:', hoje);
+        console.log('🔍 [IA Debug] Total de registros:', allData.length);
         
         // Agrupar por paciente
         const pacientes = {};
         let atendimentosHoje = 0;
         
         allData.forEach(atend => {
+            console.log('🔍 [IA Debug] Verificando atendimento:', atend.nome_paciente, 'Data:', atend.data_triagem);
+            
             // Contar atendimentos de hoje
             if (atend.data_triagem === hoje) {
                 atendimentosHoje++;
+                console.log('✅ [IA Debug] Atendimento HOJE detectado!', atend.nome_paciente);
             }
             
             const nome = atend.nome_paciente;
@@ -2825,13 +2830,22 @@
             diasDesdeUltimaVisita: calcularDiasAte(p.ultimaVisita)
         }));
         
-        return {
+        const resultado = {
             totalPacientes: pacientesArray.length,
             totalAtendimentos: allData.length,
             atendimentosHoje: atendimentosHoje,
             pacientes: pacientesArray,
             especialidades: [...new Set(allData.map(a => a.especialidade).filter(e => e))]
         };
+        
+        console.log('📊 [IA Debug] Resultado do processamento:', {
+            totalPacientes: resultado.totalPacientes,
+            totalAtendimentos: resultado.totalAtendimentos,
+            atendimentosHoje: resultado.atendimentosHoje,
+            pacientesComAtendimentoHoje: resultado.pacientes.filter(p => p.atendimentosHoje > 0).length
+        });
+        
+        return resultado;
     }
     
     // Calcular dias até hoje
@@ -3049,29 +3063,39 @@
             
             const dadosProcessados = processarDadosEstrategicos(allData);
             
+            // Preparar dados para envio
+            const dadosParaIA = {
+                pergunta: pergunta,
+                dadosCompletos: {
+                    totalPacientes: dadosProcessados.totalPacientes,
+                    totalAtendimentos: dadosProcessados.totalAtendimentos,
+                    atendimentosHoje: dadosProcessados.atendimentosHoje,
+                    especialidades: dadosProcessados.especialidades,
+                    pacientes: dadosProcessados.pacientes.slice(0, 50).map(p => ({
+                        nome: p.nome,
+                        totalVisitas: p.totalVisitas,
+                        atendimentosHoje: p.atendimentosHoje,
+                        especialidades: p.especialidades,
+                        ultimaPA: p.historicosPA[0] ? `${p.historicosPA[0].sis}×${p.historicosPA[0].dia}` : null,
+                        ultimoEco: p.ultimoEco,
+                        ultimaVisita: p.ultimaVisita,
+                        diasDesdeUltimaVisita: p.diasDesdeUltimaVisita
+                    }))
+                }
+            };
+            
+            console.log('🚀 [IA Debug] Enviando para IA:', {
+                atendimentosHoje: dadosParaIA.dadosCompletos.atendimentosHoje,
+                totalAtendimentos: dadosParaIA.dadosCompletos.totalAtendimentos,
+                totalPacientes: dadosParaIA.dadosCompletos.totalPacientes,
+                pacientesEnviados: dadosParaIA.dadosCompletos.pacientes.length
+            });
+            
             // Enviar para Netlify Function
             const response = await fetch('/.netlify/functions/ia-estrategica', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    pergunta: pergunta,
-                    dadosCompletos: {
-                        totalPacientes: dadosProcessados.totalPacientes,
-                        totalAtendimentos: dadosProcessados.totalAtendimentos,
-                        atendimentosHoje: dadosProcessados.atendimentosHoje,
-                        especialidades: dadosProcessados.especialidades,
-                        pacientes: dadosProcessados.pacientes.slice(0, 50).map(p => ({
-                            nome: p.nome,
-                            totalVisitas: p.totalVisitas,
-                            atendimentosHoje: p.atendimentosHoje,
-                            especialidades: p.especialidades,
-                            ultimaPA: p.historicosPA[0] ? `${p.historicosPA[0].sis}×${p.historicosPA[0].dia}` : null,
-                            ultimoEco: p.ultimoEco,
-                            ultimaVisita: p.ultimaVisita,
-                            diasDesdeUltimaVisita: p.diasDesdeUltimaVisita
-                        }))
-                    }
-                })
+                body: JSON.stringify(dadosParaIA)
             });
             
             const data = await response.json();
