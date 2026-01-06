@@ -2364,63 +2364,6 @@
         document.getElementById(tabId).classList.add('active');
     }
     
-    // FUNÇÃO PARA IR DIRETO PARA CENTRAL IA (BOTÃO NO HEADER)
-    
-    
-    // FUNÇÃO PRINCIPAL PARA ABRIR CENTRAL IA
-    );
-        
-        // Aguardar scroll e trocar tab
-        setTimeout(() => {
-            // Remover todas as classes active
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
-            // Ativar tab da Central IA
-            const tabs = document.querySelectorAll('.tab');
-            if (tabs.length > 1) {
-                tabs[1].classList.add('active'); // Segunda tab
-            }
-            
-            const contentIA = document.getElementById('central-ia');
-            if (contentIA) {
-                contentIA.classList.add('active');
-                contentIA.style.display = 'block';
-                
-                // Carregar dados da Central IA
-                if (typeof carregarCentralIA === 'function') {
-                    carregarCentralIA();
-                }
-                
-                console.log('✅ Central IA ativada!');
-            } else {
-                console.error('❌ Elemento central-ia não encontrado');
-            }
-        }, 300);
-    }
-    
-    // ===============================================
-    // CENTRAL DE INTELIGÊNCIA IA - FUNCTIONS
-    // ===============================================
-    
-    // Carregar Central IA
-    async  = await supabaseClient
-                .from('triagens')
-                .select('*')
-                .order('data_triagem', { ascending: false });
-            
-            if (error) throw error;
-            
-            // Processar dados para análise
-            // Dados processados (função removida - não há mais IA)
-            loadingIA.style.display = 'none';
-            contentIA.style.display = 'block';
-            
-        } catch (error) {
-            console.error('Erro ao carregar Central IA:', error);
-            loadingIA.innerHTML = '❌ Erro ao carregar dados. Tente novamente.';
-        }
-    }
     
     // Processar dados estratégicos
     function processarDadosEstrategicos(allData) {
