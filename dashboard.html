@@ -1657,7 +1657,13 @@
     
     // Inicializar Supabase
     function inicializarSupabase() {
+        console.log('🚀 Inicializando Supabase...');
+        console.log('   SDK disponível?', typeof supabase !== 'undefined');
+        console.log('   Config URL:', SUPABASE_CONFIG?.url);
+        console.log('   Config Key:', SUPABASE_CONFIG?.anonKey ? '✓ Presente' : '✗ Ausente');
+        
         if (typeof supabase === 'undefined') {
+            console.error('❌ Supabase SDK não carregado!');
             alert('❌ Supabase SDK não carregado!');
             return false;
         }
@@ -1741,7 +1747,23 @@
             // Buscar todos os dados (incluindo tipo_atendimento para análise de conversão)
             const { data: allData, error: allError } = await query;
             
-            if (allError) throw allError;
+            // DEBUG: Log detalhado
+            console.log('🔍 DEBUG Supabase Query:');
+            console.log('   URL:', SUPABASE_CONFIG.url);
+            console.log('   Query:', query);
+            console.log('   Data:', allData);
+            console.log('   Error:', allError);
+            console.log('   Total registros:', allData ? allData.length : 0);
+            
+            if (allError) {
+                console.error('❌ ERRO ao buscar dados:', allError);
+                alert('❌ Erro ao buscar dados: ' + allError.message);
+                throw allError;
+            }
+            
+            if (!allData || allData.length === 0) {
+                console.warn('⚠️ Nenhum dado encontrado na tabela triagens');
+            }
             
             // ===============================================
             // 1. CONTADORES GERAIS
@@ -1950,8 +1972,18 @@
             document.getElementById('dashboard').style.display = 'block';
             
         } catch (error) {
-            console.error('Erro ao carregar dados:', error);
-            document.getElementById('loading').innerHTML = '❌ Erro ao carregar dados: ' + error.message;
+            console.error('❌ ERRO CRÍTICO ao carregar dados:', error);
+            console.error('   Detalhes:', {
+                message: error.message,
+                stack: error.stack,
+                supabaseURL: SUPABASE_CONFIG.url,
+                supabaseKey: SUPABASE_CONFIG.anonKey ? '✓ Configurada' : '✗ Faltando'
+            });
+            document.getElementById('loading').innerHTML = `
+                ❌ Erro ao carregar dados: ${error.message}<br>
+                <small>Veja o Console (F12) para mais detalhes</small>
+            `;
+            alert('❌ Erro ao carregar dados: ' + error.message + '\n\nAbra o Console (F12) para mais detalhes.');
         }
     }
     

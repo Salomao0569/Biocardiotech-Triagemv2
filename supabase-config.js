@@ -19,8 +19,8 @@ const SUPABASE_CONFIG = {
     // URL do projeto Supabase
     url: 'https://tsaxwxchxhbvmotkxonq.supabase.co',
     
-    // Chave anon/public para acesso ao banco (Publishable Key)
-    anonKey: 'sb_publishable_5Mau2TiE8Ywey61MZCSkfA_-JkcHuVv'
+    // Chave anon/public para acesso ao banco
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRzYXh3eGNoeGhidm1vdGt4b25xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc0NzgxMzUsImV4cCI6MjA4MzA1NDEzNX0.bIfHNQest_rYd5FUJrAdbw8ne136td9Hjh4-vpmlSKw'
 };
 
 // ============================================
