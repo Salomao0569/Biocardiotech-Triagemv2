@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Business Intelligence - Clínica Biocardio</title>
-    
+    <!-- Central IA Integrada - Versão 2.0 -->
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -705,9 +705,28 @@
         }
         
         /* INSIGHT DA INTELIGÊNCIA BIOCARDIO */
+        .insight-ia-card {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 2px solid #0ea5e9;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 16px rgba(14, 165, 233, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
         
-        
-        
+        .insight-ia-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #0ea5e9, #06b6d4, #0ea5e9);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite;
+        }
         
         @keyframes shimmer {
             0% { background-position: -200% 0; }
@@ -1088,24 +1107,61 @@
         }
         
         /* ============================================ */
-        
+        /* CENTRAL DE INTELIGÊNCIA IA - PROFESSIONAL DARK MODE */
         /* ============================================ */
         
+        .central-ia-container {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
         
-        
+        .central-ia-container .page-title,
+        .central-ia-container .page-subtitle {
+            color: white;
+        }
         
         /* ORACLE IA - CHAT INTERATIVO */
+        .oracle-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
         
+        .oracle-title {
+            color: #60a5fa;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
         
+        .oracle-subtitle {
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
         
+        .oracle-chat {
+            background: #1e293b;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
         
+        .chat-messages {
+            min-height: 300px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
         
-        
-        
-        
-        
-        
-        
+        .chat-welcome {
+            text-align: center;
+            padding: 40px 20px;
+        }
         
         .welcome-icon {
             font-size: 60px;
@@ -1145,7 +1201,12 @@
             border-left: 3px solid #60a5fa;
         }
         
-        
+        .chat-message {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            animation: slideIn 0.3s ease-out;
+        }
         
         @keyframes slideIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -1156,7 +1217,16 @@
             flex-direction: row-reverse;
         }
         
-        
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
         
         .chat-avatar.user {
             background: linear-gradient(135deg, #3b82f6, #2563eb);
@@ -1166,7 +1236,12 @@
             background: linear-gradient(135deg, #8b5cf6, #6366f1);
         }
         
-        
+        .chat-bubble {
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 12px;
+            word-wrap: break-word;
+        }
         
         .chat-bubble.user {
             background: linear-gradient(135deg, #3b82f6, #2563eb);
@@ -1179,9 +1254,24 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
         
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            background: rgba(255,255,255,0.03);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
         
-        
-        
+        .chat-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+            color: white;
+            font-size: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
         
         .chat-input:focus {
             outline: none;
@@ -1270,31 +1360,76 @@
         }
         
         /* DIAMOND CLUB */
+        .diamond-club-section {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(139, 92, 246, 0.1));
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
         
+        .diamond-title {
+            color: #c084fc;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
         
+        .diamond-subtitle {
+            color: #cbd5e1;
+            margin-bottom: 20px;
+        }
         
+        .diamond-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
         
-        
-        
-        
-        
-        
+        .diamond-item {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            transition: all 0.3s;
+        }
         
         .diamond-item:hover {
             transform: scale(1.02);
             border-color: #c084fc;
         }
         
+        .diamond-item-name {
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
         
-        
-        
+        .diamond-item-stats {
+            color: #cbd5e1;
+            font-size: 14px;
+        }
         
         /* DELTA VITALS */
+        .delta-vitals-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
         
+        .delta-title {
+            color: #60a5fa;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
         
-        
-        
-        
+        .delta-subtitle {
+            color: #cbd5e1;
+            margin-bottom: 20px;
+        }
         
         #delta-vitals-chart-container {
             background: rgba(255,255,255,0.03);
@@ -1317,7 +1452,7 @@
         <div class="header-nav">
             <a href="index.html" class="btn-nav">📋 Nova Triagem</a>
             <button class="btn-nav" onclick="carregarDados()">🔄 Atualizar</button>
-            
+            <button class="btn-nav" onclick="irParaCentralIA()" style="background: linear-gradient(135deg, #8b5cf6, #6366f1); border-color: #8b5cf6;">🧠 Central IA</button>
         </div>
     </div>
 </div>
@@ -1328,7 +1463,9 @@
         <li class="tab active" onclick="switchTab('dashboard-executivo')">
             <span class="tab-icon">📊</span> Dashboard Executivo
         </li>
-        
+        <li class="tab" onclick="switchTab('central-ia')">
+            <span class="tab-icon">🧠</span> Central de Inteligência IA
+        </li>
     </ul>
 </div>
 
@@ -1338,24 +1475,13 @@
         <h1 class="page-title">🧠 Business Intelligence</h1>
         <p class="page-subtitle">Inteligência de Dados • Jornada do Paciente • Previsibilidade</p>
         
-        <!-- FILTRO DE MÊS -->
-        <div class="search-form" style="margin-bottom: 30px;">
-            <div class="search-row">
-                <div class="search-field">
-                    <label for="filtro-mes">📅 Filtrar por Mês/Ano</label>
-                    <input type="month" id="filtro-mes" onchange="carregarDados()">
-                </div>
-                <div class="search-field">
-                    <label style="opacity: 0;">Ações</label>
-                    <button class="btn-search" onclick="limparFiltroMes()" style="width: 100%;">🗑️ Ver Todos os Dados</button>
-                </div>
-                <div class="search-field">
-                    <label style="opacity: 0;">Info</label>
-                    <div style="padding: 12px; background: #e3f2fd; border-radius: 8px; font-size: 13px; color: #1565c0;">
-                        <strong id="info-periodo">Exibindo: Todos os dados</strong>
-                    </div>
-                </div>
-            </div>
+        <!-- BOTÃO DE ACESSO À CENTRAL IA -->
+        <div style="text-align: center; margin: 30px 0; padding: 30px; background: linear-gradient(135deg, #8b5cf6, #6366f1); border-radius: 20px; box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);">
+            <h2 style="color: white; font-size: 28px; margin-bottom: 15px; font-family: 'Montserrat', sans-serif;">🧠 Acesse a Central de Inteligência IA</h2>
+            <p style="color: rgba(255,255,255,0.9); margin-bottom: 25px; font-size: 16px;">Oracle IA • Insights Proativos • Diamond Club • Tendências</p>
+            <button onclick="abrirCentralIA()" style="display: inline-block; padding: 18px 50px; background: white; color: #8b5cf6; font-size: 20px; font-weight: 700; border-radius: 12px; border: none; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-family: 'Montserrat', sans-serif;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)'">
+                🚀 ABRIR CENTRAL IA
+            </button>
         </div>
         
         <div id="loading" class="loading">Carregando inteligência de dados</div>
@@ -1621,7 +1747,19 @@
                     </div>
                 </div>
                 
-                
+                <!-- INSIGHT DA INTELIGÊNCIA BIOCARDIO -->
+                <div class="insight-ia-card">
+                    <div class="insight-header">
+                        <span class="insight-icon">💡</span>
+                        <h4 class="insight-title">Insight da Inteligência Biocardio</h4>
+                        <span class="insight-badge">IA</span>
+                    </div>
+                    <div id="insight-conteudo" class="insight-conteudo">
+                        <div class="insight-loading">
+                            <div class="spinner"></div>
+                            <span>Analisando dados com IA...</span>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- TIMELINE DE ATENDIMENTOS -->
@@ -1645,7 +1783,41 @@
 <!-- FIM DO DASHBOARD EXECUTIVO -->
 </div>
 
-
+<!-- CONTEÚDO TAB 2: CENTRAL DE INTELIGÊNCIA IA -->
+<div id="central-ia" class="tab-content">
+    <div class="container central-ia-container">
+        <h1 class="page-title">🧠 Biocardio Intelligence Hub</h1>
+        <p class="page-subtitle">Gestão Estratégica e Clínica de Precisão</p>
+        
+        <div id="loading-ia" class="loading">Analisando histórico de exames...</div>
+        
+        <div id="central-ia-content" style="display: none;">
+            
+            <!-- CHAT INTERATIVO (ORACLE IA) -->
+            <div class="oracle-section">
+                <h2 class="oracle-title">💬 Oracle IA - Consulta Inteligente</h2>
+                <p class="oracle-subtitle">Faça perguntas sobre seus dados e receba insights estratégicos</p>
+                
+                <div class="oracle-chat">
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="chat-welcome">
+                            <div class="welcome-icon">🔮</div>
+                            <h3>Bem-vindo à Central de Inteligência Biocardio</h3>
+                            <p>Pergunte qualquer coisa sobre seus pacientes:</p>
+                            <ul class="example-questions">
+                                <li>"Quem são os hipertensos que não fazem Eco há 6 meses?"</li>
+                                <li>"Qual a média de PA dos pacientes de Cardiologia?"</li>
+                                <li>"Quais pacientes precisam de retorno urgente?"</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-container">
+                        <input type="text" id="chat-input" placeholder="Digite sua pergunta sobre os dados..." class="chat-input">
+                        <button onclick="enviarPerguntaIA()" class="btn-send-chat">🚀 Enviar</button>
+                    </div>
+                </div>
+            </div>
             
             <!-- GRID DE INSIGHTS PROATIVOS -->
             <div class="insights-grid">
@@ -1770,29 +1942,11 @@
             const inicioMes = getStartOfMonth();
             const inicioAno = new Date().getFullYear() + '-01-01';
             
-            // Verificar filtro de mês
-            const filtroMes = document.getElementById('filtro-mes').value;
-            let query = supabaseClient
+            // Buscar todos os dados (incluindo tipo_atendimento para análise de conversão)
+            const { data: allData, error: allError } = await supabaseClient
                 .from('triagens')
                 .select('nome_paciente, especialidade, tipo_atendimento, data_triagem, criado_em')
                 .order('criado_em', { ascending: true });
-            
-            // Aplicar filtro se selecionado
-            if (filtroMes) {
-                const [ano, mes] = filtroMes.split('-');
-                const inicioMesFiltro = `${ano}-${mes}-01`;
-                const fimMesFiltro = new Date(parseInt(ano), parseInt(mes), 0).toISOString().split('T')[0];
-                query = query.gte('data_triagem', inicioMesFiltro).lte('data_triagem', fimMesFiltro);
-                
-                // Atualizar info do período
-                const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-                document.getElementById('info-periodo').innerText = `Exibindo: ${meses[parseInt(mes) - 1]}/${ano}`;
-            } else {
-                document.getElementById('info-periodo').innerText = 'Exibindo: Todos os dados';
-            }
-            
-            // Buscar todos os dados (incluindo tipo_atendimento para análise de conversão)
-            const { data: allData, error: allError } = await query;
             
             if (allError) throw allError;
             
@@ -2140,12 +2294,6 @@
         document.getElementById('prontuario-vazio').style.display = 'none';
     }
     
-    // Limpar filtro de mês
-    function limparFiltroMes() {
-        document.getElementById('filtro-mes').value = '';
-        carregarDados();
-    }
-    
     // Imprimir prontuário
     function imprimirProntuario() {
         // Adicionar data de impressão
@@ -2281,7 +2429,26 @@
     }
     
     // Chamar IA para análise com histórico completo
-    ,
+    async function analisarComIA(paciente, historicoCompleto) {
+        const insightConteudo = document.getElementById('insight-conteudo');
+        
+        // Mostrar loading
+        insightConteudo.innerHTML = `
+            <div class="insight-loading">
+                <div class="spinner"></div>
+                <span>Analisando jornada completa do paciente...</span>
+            </div>
+        `;
+        
+        try {
+            const totalVisitas = historicoCompleto.length;
+            const atendimentoAtual = historicoCompleto[0]; // Mais recente
+            
+            const response = await fetch('/.netlify/functions/analisar-paciente', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify({
                     paciente: {
                         nome: paciente.nome_paciente,
@@ -2409,6 +2576,9 @@
         document.getElementById('paciente-sexo').innerText = paciente.sexo || 'Não informado';
         document.getElementById('paciente-total-visitas').innerText = `${atendimentos.length} ${atendimentos.length === 1 ? 'visita' : 'visitas'}`;
         
+        // Chamar IA para análise com histórico completo
+        analisarComIA(paciente, atendimentos);
+        
         // Timeline de atendimentos
         const timeline = document.getElementById('timeline-atendimentos');
         timeline.innerHTML = '';
@@ -2501,13 +2671,24 @@
             event.target.classList.add('active');
         }
         document.getElementById(tabId).classList.add('active');
+        
+        // Se for a Central IA, carregar dados
+        if (tabId === 'central-ia') {
+            carregarCentralIA();
+        }
     }
     
     // FUNÇÃO PARA IR DIRETO PARA CENTRAL IA (BOTÃO NO HEADER)
-    
+    function irParaCentralIA() {
+        abrirCentralIA();
+    }
     
     // FUNÇÃO PRINCIPAL PARA ABRIR CENTRAL IA
-    );
+    function abrirCentralIA() {
+        console.log('🚀 Abrindo Central IA...');
+        
+        // Scroll para o topo
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         
         // Aguardar scroll e trocar tab
         setTimeout(() => {
@@ -2543,7 +2724,16 @@
     // ===============================================
     
     // Carregar Central IA
-    async  = await supabaseClient
+    async function carregarCentralIA() {
+        const loadingIA = document.getElementById('loading-ia');
+        const contentIA = document.getElementById('central-ia-content');
+        
+        loadingIA.style.display = 'block';
+        contentIA.style.display = 'none';
+        
+        try {
+            // Buscar TODOS os dados do Supabase
+            const { data: allData, error } = await supabaseClient
                 .from('triagens')
                 .select('*')
                 .order('data_triagem', { ascending: false });
@@ -2830,7 +3020,14 @@
     }
     
     // Enviar pergunta para Oracle IA
-    
+    async function enviarPerguntaIA() {
+        const input = document.getElementById('chat-input');
+        const pergunta = input.value.trim();
+        
+        if (!pergunta) {
+            alert('Por favor, digite uma pergunta');
+            return;
+        }
         
         const chatMessages = document.getElementById('chat-messages');
         
@@ -2965,7 +3162,9 @@
                     <li class="tab active" onclick="switchTab('dashboard-executivo')">
                         <span class="tab-icon">📊</span> Dashboard Executivo
                     </li>
-                    
+                    <li class="tab" onclick="switchTab('central-ia')">
+                        <span class="tab-icon">🧠</span> Central de Inteligência IA
+                    </li>
                 </ul>
             </div>
         `;
