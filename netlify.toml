@@ -8,6 +8,18 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
+# Redirecionamentos
+[[redirects]]
+  from = "/"
+  to = "/login.html"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/*"
+  to = "/:splat"
+  status = 200
+
 [[headers]]
   for = "/*.html"
   [headers.values]

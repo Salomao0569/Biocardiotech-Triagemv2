@@ -1302,9 +1302,102 @@
             border-radius: 12px;
             min-height: 400px;
         }
+        /* Tela de Loading para Autenticação */
+        #authLoading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        
+        #authLoading > div {
+            text-align: center;
+            color: white;
+        }
+        
+        .auth-spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Barra de Usuário */
+        .user-bar {
+            background: #f8f9fa;
+            padding: 12px 20px;
+            border-bottom: 1px solid #ddd;
+            display: none;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+        
+        .user-bar.show {
+            display: flex;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .btn-logout {
+            padding: 8px 16px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-logout:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 <body>
+
+<!-- Tela de Loading para Autenticação -->
+<div id="authLoading">
+    <div>
+        <div class="auth-spinner"></div>
+        <p style="margin-top: 20px; font-size: 16px;">Verificando autenticação...</p>
+    </div>
+</div>
+
+<!-- Barra de Usuário -->
+<div class="user-bar" id="userBar">
+    <div class="user-info">
+        <span>👤</span>
+        <span id="userEmail"></span>
+    </div>
+    <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+</div>
 
 <div class="header">
     <div class="header-content">
@@ -2510,6 +2603,73 @@
         }
         
         console.log('✅ Tabs injetadas com sucesso!');
+    }
+</script>
+
+<!-- Firebase SDK via CDN (versão 10.7.1 compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+<script>
+    // Configuração do Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyBg9uOmPAiQTCtZgO8A0sf49q305bOVApk",
+        authDomain: "dashboardcardiologico.firebaseapp.com",
+        projectId: "dashboardcardiologico",
+        storageBucket: "dashboardcardiologico.firebasestorage.app",
+        messagingSenderId: "1070316069304",
+        appId: "1:1070316069304:web:86010f585987d0dd1aef4d"
+    };
+
+    // E-mails autorizados
+    const EMAILS_AUTORIZADOS = [
+        'salomaoalco@gmail.com',
+        'contato@biocardio.com.br'
+    ];
+
+    // Inicializar Firebase
+    firebase.initializeApp(firebaseConfig);
+    const authFirebase = firebase.auth();
+
+    // Verificar autenticação ao carregar
+    authFirebase.onAuthStateChanged((user) => {
+        const authLoading = document.getElementById('authLoading');
+        const userBar = document.getElementById('userBar');
+        const userEmail = document.getElementById('userEmail');
+
+        if (user && EMAILS_AUTORIZADOS.includes(user.email.toLowerCase())) {
+            // Usuário autenticado e autorizado
+            console.log('✅ Usuário autenticado:', user.email);
+            
+            // Mostrar barra de usuário
+            userEmail.textContent = user.email;
+            userBar.classList.add('show');
+            
+            // Esconder loading
+            authLoading.style.display = 'none';
+            
+            // Carregar dados do dashboard
+            if (typeof carregarDados === 'function') {
+                carregarDados();
+            }
+            
+        } else {
+            // Não autenticado ou não autorizado
+            console.log('❌ Não autenticado ou não autorizado');
+            window.location.href = 'login.html';
+        }
+    });
+
+    // Função de logout
+    function fazerLogout() {
+        if (confirm('Deseja realmente sair?')) {
+            authFirebase.signOut().then(() => {
+                window.location.href = 'login.html';
+            }).catch((error) => {
+                console.error('Erro ao fazer logout:', error);
+                alert('Erro ao fazer logout. Tente novamente.');
+            });
+        }
     }
 </script>
 
