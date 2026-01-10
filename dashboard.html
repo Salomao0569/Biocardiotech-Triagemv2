@@ -102,6 +102,8 @@
             padding: 0 20px;
             background: #f8f9fa;
             border-bottom: 2px solid #dee2e6;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
         
         .tabs {
@@ -110,6 +112,7 @@
             list-style: none;
             padding: 0;
             margin: 0;
+            min-width: min-content;
         }
         
         .tab {
@@ -126,6 +129,7 @@
             border-bottom: 3px solid transparent;
             transition: all 0.3s;
             position: relative;
+            white-space: nowrap;
         }
         
         .tab:hover {
@@ -416,6 +420,36 @@
             0%, 20% { content: '.'; }
             40% { content: '..'; }
             60%, 100% { content: '...'; }
+        }
+        
+        /* Touch-friendly scroll indicator para tabs */
+        .tabs-container::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 40px;
+            background: linear-gradient(to left, #f8f9fa, transparent);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        @media (max-width: 768px) {
+            .tabs-container {
+                position: relative;
+                scrollbar-width: none; /* Firefox */
+                -ms-overflow-style: none; /* IE and Edge */
+            }
+            
+            .tabs-container::-webkit-scrollbar {
+                display: none; /* Chrome, Safari, Opera */
+            }
+            
+            .tabs-container::after {
+                opacity: 1;
+            }
         }
         
         /* BADGE */
@@ -918,81 +952,571 @@
             color: #065f46;
         }
         
+        /* Scrollbar customizada para navegadores webkit (desktop) */
+        @media (min-width: 769px) {
+            .tabs-container::-webkit-scrollbar {
+                height: 8px;
+            }
+            
+            .tabs-container::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 10px;
+            }
+            
+            .tabs-container::-webkit-scrollbar-thumb {
+                background: #888;
+                border-radius: 10px;
+            }
+            
+            .tabs-container::-webkit-scrollbar-thumb:hover {
+                background: #555;
+            }
+        }
+        
+        /* Animação de scroll suave */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Melhorar tap targets (botões) para mobile */
+        @media (max-width: 768px) {
+            button, .btn-nav, .btn-action, .btn-search, .btn-clear-search, .tab {
+                min-height: 44px; /* Tamanho mínimo recomendado pela Apple para touch targets */
+                -webkit-tap-highlight-color: rgba(0, 61, 122, 0.1);
+            }
+            
+            /* Insight metadata responsivo */
+            .insight-metadata {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .metadata-right {
+                width: 100%;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+            }
+            
+            .insight-badge-contador,
+            .insight-recorrente,
+            .insight-multi,
+            .insight-eco-ok,
+            .insight-eco-pendente,
+            .insight-conversao,
+            .insight-variacao {
+                font-size: 10px;
+                padding: 4px 8px;
+            }
+            
+            /* Insight header e conteúdo */
+            .insight-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .insight-icon {
+                font-size: 24px;
+            }
+            
+            .insight-title {
+                font-size: 16px;
+            }
+            
+            .insight-badge {
+                font-size: 10px;
+                padding: 3px 10px;
+            }
+            
+            .insight-conteudo {
+                padding: 15px;
+                min-height: 60px;
+            }
+            
+            .insight-texto {
+                font-size: 14px;
+                line-height: 1.5;
+            }
+            
+            .insight-loading {
+                font-size: 13px;
+            }
+            
+            .spinner {
+                width: 20px;
+                height: 20px;
+            }
+            
+            /* Ajustar ícones e badges */
+            .timeline-badge {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 100%;
+            }
+            
+            /* Melhorar legibilidade de badges */
+            .badge {
+                font-size: 10px;
+                padding: 3px 10px;
+            }
+            
+            /* Loading mais compacto */
+            .loading {
+                padding: 40px 15px;
+                font-size: 16px;
+            }
+            
+            /* Chart wrapper ajuste final */
+            .chart-wrapper canvas {
+                max-height: 250px !important;
+            }
+        }
+        
         /* RESPONSIVO */
         @media (max-width: 768px) {
+            /* Cabeçalho */
+            .header {
+                padding: 20px 15px;
+            }
+            
             .header-content {
                 flex-direction: column;
                 text-align: center;
+                gap: 15px;
+            }
+            
+            .logo {
+                font-size: 22px;
+            }
+            
+            .header-subtitle {
+                font-size: 12px;
             }
             
             .header-nav {
                 flex-direction: column;
                 width: 100%;
+                gap: 10px;
             }
             
             .btn-nav {
                 width: 100%;
+                padding: 12px 20px;
+                font-size: 13px;
             }
             
+            /* Tabs mobile */
+            .tabs-container {
+                padding: 0 10px;
+            }
+            
+            .tab {
+                padding: 14px 20px;
+                font-size: 12px;
+            }
+            
+            .tab-icon {
+                margin-right: 5px;
+            }
+            
+            /* Container */
+            .container {
+                margin: 20px auto;
+                padding: 0 15px;
+            }
+            
+            /* Títulos */
             .page-title {
-                font-size: 24px;
+                font-size: 20px;
+                margin-bottom: 8px;
+            }
+            
+            .page-subtitle {
+                font-size: 12px;
+                margin-bottom: 20px;
+            }
+            
+            .section-title {
+                font-size: 18px;
+            }
+            
+            .section-subtitle {
+                font-size: 12px;
+            }
+            
+            /* Cards de estatísticas */
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                margin-bottom: 30px;
+            }
+            
+            .stat-card {
+                padding: 20px;
+            }
+            
+            .stat-card-icon {
+                font-size: 32px;
+                margin-bottom: 10px;
+            }
+            
+            .stat-card-title {
+                font-size: 11px;
             }
             
             .stat-card-value {
-                font-size: 36px;
+                font-size: 32px;
             }
             
+            .stat-card-subtitle {
+                font-size: 11px;
+            }
+            
+            /* Seções */
+            .section {
+                padding: 25px 15px;
+                margin-bottom: 25px;
+                border-radius: 12px;
+            }
+            
+            /* Tabela de produção - transformar em cards em mobile */
             .production-table {
-                font-size: 14px;
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
             }
             
-            .production-table th,
+            .production-table thead {
+                display: none;
+            }
+            
+            .production-table tbody {
+                display: block;
+            }
+            
+            .production-table tbody tr {
+                display: block;
+                background: #f8f9fa;
+                border-radius: 12px;
+                padding: 15px;
+                margin-bottom: 15px;
+                border-left: 4px solid #003d7a;
+            }
+            
+            .production-table tbody tr:hover {
+                background: #e9ecef;
+            }
+            
             .production-table td {
-                padding: 15px 10px;
+                display: block;
+                text-align: left !important;
+                padding: 8px 0 !important;
+                border: none;
+            }
+            
+            .production-table td:first-child {
+                font-size: 16px;
+                font-weight: 700;
+                color: #003d7a;
+                padding-bottom: 12px !important;
+                border-bottom: 1px solid #ddd;
+                margin-bottom: 10px;
+            }
+            
+            .production-table td:not(:first-child) {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px 0 !important;
+            }
+            
+            .production-table td:not(:first-child)::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: #666;
+                font-size: 12px;
+                text-transform: uppercase;
             }
             
             .production-value {
-                font-size: 24px;
+                font-size: 20px;
             }
             
+            .production-label {
+                font-size: 10px;
+            }
+            
+            /* Mini-sumário de conversão */
+            .section > div[style*="display: flex"] {
+                flex-direction: column !important;
+                gap: 10px !important;
+            }
+            
+            .section > div[style*="display: flex"] > div {
+                min-width: 100% !important;
+                padding: 12px 15px !important;
+            }
+            
+            .section > div[style*="display: flex"] > div > div:first-child {
+                font-size: 11px !important;
+            }
+            
+            .section > div[style*="display: flex"] > div > div:last-child {
+                font-size: 24px !important;
+            }
+            
+            /* KPI Grid */
+            .kpi-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .kpi-card {
+                padding: 20px;
+            }
+            
+            .kpi-label {
+                font-size: 11px;
+            }
+            
+            .kpi-value {
+                font-size: 28px;
+            }
+            
+            .kpi-description {
+                font-size: 11px;
+            }
+            
+            /* Gráfico */
             .chart-wrapper {
-                height: 300px;
+                height: 250px;
             }
             
-            /* Prontuário responsivo */
+            /* Formulário de busca */
+            .search-form {
+                padding: 20px 15px;
+            }
+            
             .search-row {
                 grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .search-field label {
+                font-size: 11px;
+            }
+            
+            .search-field input {
+                padding: 12px;
+                font-size: 14px;
             }
             
             .search-actions {
                 flex-direction: column;
+                width: 100%;
             }
             
             .btn-search, .btn-clear-search {
                 width: 100%;
+                padding: 14px 20px;
+                font-size: 13px;
             }
             
+            /* Cabeçalho do paciente */
             .paciente-header {
                 flex-direction: column;
                 align-items: flex-start;
+                padding: 20px;
+                gap: 15px;
+            }
+            
+            .paciente-info h3 {
+                font-size: 22px;
+                margin-bottom: 10px;
             }
             
             .paciente-actions {
                 width: 100%;
                 flex-direction: column;
+                gap: 10px;
             }
             
             .btn-action {
                 width: 100%;
+                padding: 12px 16px;
+                font-size: 13px;
             }
             
             .paciente-detalhes {
                 flex-direction: column;
+                gap: 8px;
+                font-size: 14px;
+            }
+            
+            /* Timeline */
+            .timeline-item {
+                padding: 20px 15px;
+                margin-bottom: 15px;
+            }
+            
+            .timeline-header {
+                flex-direction: column;
+                align-items: flex-start;
                 gap: 10px;
+            }
+            
+            .timeline-date {
+                font-size: 16px;
+            }
+            
+            .timeline-badge {
+                font-size: 11px;
+                padding: 5px 12px;
             }
             
             .timeline-body {
                 grid-template-columns: 1fr 1fr;
+                gap: 15px;
+            }
+            
+            .timeline-label {
+                font-size: 10px;
+            }
+            
+            .timeline-value {
+                font-size: 15px;
+            }
+            
+            /* Empty State */
+            .empty-state {
+                padding: 40px 15px;
+            }
+            
+            .empty-icon {
+                font-size: 48px;
+            }
+            
+            .empty-state h3 {
+                font-size: 18px;
+            }
+            
+            .empty-state p {
+                font-size: 13px;
+            }
+            
+            /* Insights */
+            .insights-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .insight-card {
+                padding: 20px 15px;
+            }
+            
+            .insight-card-icon {
+                font-size: 28px;
+            }
+            
+            .insight-card-header h3 {
+                font-size: 16px;
+            }
+            
+            .insight-card-body {
+                font-size: 14px;
+            }
+            
+            /* User bar */
+            .user-bar {
+                padding: 10px 15px;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            
+            .user-info {
+                justify-content: center;
+                font-size: 13px;
+            }
+            
+            .btn-logout {
+                width: 100%;
+                padding: 10px;
+            }
+        }
+        
+        /* Tablets em modo retrato */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .tab {
+                padding: 16px 30px;
+                font-size: 13px;
+            }
+            
+            .production-table {
+                font-size: 13px;
+            }
+            
+            .production-table th,
+            .production-table td {
+                padding: 18px 15px;
+            }
+            
+            .production-value {
+                font-size: 28px;
+            }
+        }
+        
+        /* Celulares pequenos */
+        @media (max-width: 375px) {
+            .header {
+                padding: 15px 10px;
+            }
+            
+            .logo {
+                font-size: 18px;
+            }
+            
+            .container {
+                padding: 0 10px;
+            }
+            
+            .page-title {
+                font-size: 18px;
+            }
+            
+            .stat-card {
+                padding: 15px;
+            }
+            
+            .stat-card-value {
+                font-size: 28px;
+            }
+            
+            .section {
+                padding: 20px 12px;
+            }
+            
+            .section-title {
+                font-size: 16px;
+            }
+            
+            .timeline-body {
+                grid-template-columns: 1fr;
+            }
+            
+            .tab {
+                padding: 12px 15px;
+                font-size: 11px;
             }
         }
         
@@ -1521,91 +2045,91 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Cardiologia</td>
-                        <td>
+                        <td data-label="Especialidade">Cardiologia</td>
+                        <td data-label="Hoje">
                             <div class="production-value" id="cardio-hoje">0</div>
                             <div class="production-label">atendimentos</div>
                         </td>
-                        <td>
+                        <td data-label="Esta Semana">
                             <div class="production-value" id="cardio-semana">0</div>
                             <div class="production-label">atendimentos</div>
                         </td>
-                        <td>
+                        <td data-label="Este Mês">
                             <div class="production-value" id="cardio-mes">0</div>
                             <div class="production-label">atendimentos</div>
                         </td>
                     </tr>
                     <tr>
-                        <td>Endocrinologia</td>
-                        <td>
+                        <td data-label="Especialidade">Endocrinologia</td>
+                        <td data-label="Hoje">
                             <div class="production-value" id="endo-hoje">0</div>
                             <div class="production-label">atendimentos</div>
                         </td>
-                        <td>
+                        <td data-label="Esta Semana">
                             <div class="production-value" id="endo-semana">0</div>
                             <div class="production-label">atendimentos</div>
                         </td>
-                        <td>
+                        <td data-label="Este Mês">
                             <div class="production-value" id="endo-mes">0</div>
                             <div class="production-label">atendimentos</div>
                         </td>
                     </tr>
                     <tr>
-                        <td>Cirurgia Vascular</td>
-                        <td>
+                        <td data-label="Especialidade">Cirurgia Vascular</td>
+                        <td data-label="Hoje">
                             <div class="production-value" id="vascular-hoje">0</div>
                             <div class="production-label">atendimentos</div>
                         </td>
-                        <td>
+                        <td data-label="Esta Semana">
                             <div class="production-value" id="vascular-semana">0</div>
                             <div class="production-label">atendimentos</div>
                         </td>
-                        <td>
+                        <td data-label="Este Mês">
                             <div class="production-value" id="vascular-mes">0</div>
                             <div class="production-label">atendimentos</div>
                         </td>
                     </tr>
                     <tr>
-                        <td>Ecocardiograma</td>
-                        <td>
+                        <td data-label="Especialidade">Ecocardiograma</td>
+                        <td data-label="Hoje">
                             <div class="production-value" id="eco-hoje">0</div>
                             <div class="production-label">atendimentos</div>
                         </td>
-                        <td>
+                        <td data-label="Esta Semana">
                             <div class="production-value" id="eco-semana">0</div>
                             <div class="production-label">atendimentos</div>
                         </td>
-                        <td>
+                        <td data-label="Este Mês">
                             <div class="production-value" id="eco-mes">0</div>
                             <div class="production-label">atendimentos</div>
                         </td>
                     </tr>
                     <tr>
-                        <td>Exames Cardiológicos</td>
-                        <td>
+                        <td data-label="Especialidade">Exames Cardiológicos</td>
+                        <td data-label="Hoje">
                             <div class="production-value" id="exames-hoje">0</div>
                             <div class="production-label">atendimentos</div>
                         </td>
-                        <td>
+                        <td data-label="Esta Semana">
                             <div class="production-value" id="exames-semana">0</div>
                             <div class="production-label">atendimentos</div>
                         </td>
-                        <td>
+                        <td data-label="Este Mês">
                             <div class="production-value" id="exames-mes">0</div>
                             <div class="production-label">atendimentos</div>
                         </td>
                     </tr>
                     <tr>
-                        <td>Ultrassom</td>
-                        <td>
+                        <td data-label="Especialidade">Ultrassom</td>
+                        <td data-label="Hoje">
                             <div class="production-value" id="ultrassom-hoje">0</div>
                             <div class="production-label">atendimentos</div>
                         </td>
-                        <td>
+                        <td data-label="Esta Semana">
                             <div class="production-value" id="ultrassom-semana">0</div>
                             <div class="production-label">atendimentos</div>
                         </td>
-                        <td>
+                        <td data-label="Este Mês">
                             <div class="production-value" id="ultrassom-mes">0</div>
                             <div class="production-label">atendimentos</div>
                         </td>
@@ -2463,7 +2987,88 @@
         // Injetar tabs se não existirem (solução para cache do Netlify)
         injetarTabsSeNecessario();
         carregarDados();
+        
+        // Inicializar melhorias mobile
+        inicializarMobile();
     };
+    
+    // Melhorias para experiência mobile
+    function inicializarMobile() {
+        // Adicionar feedback visual de toque em todos os botões
+        const botoes = document.querySelectorAll('button, .btn-nav, .btn-action, .tab');
+        botoes.forEach(botao => {
+            botao.addEventListener('touchstart', function() {
+                this.style.opacity = '0.7';
+            });
+            botao.addEventListener('touchend', function() {
+                this.style.opacity = '1';
+            });
+            botao.addEventListener('touchcancel', function() {
+                this.style.opacity = '1';
+            });
+        });
+        
+        // Melhorar scroll horizontal das tabs em mobile
+        const tabsContainer = document.querySelector('.tabs-container');
+        if (tabsContainer && window.innerWidth <= 768) {
+            // Scroll suave para a tab ativa
+            const activeTab = document.querySelector('.tab.active');
+            if (activeTab) {
+                setTimeout(() => {
+                    activeTab.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        inline: 'center', 
+                        block: 'nearest' 
+                    });
+                }, 100);
+            }
+            
+            // Indicador visual de scroll
+            let scrollTimeout;
+            tabsContainer.addEventListener('scroll', function() {
+                clearTimeout(scrollTimeout);
+                
+                // Adicionar classe durante scroll
+                this.classList.add('is-scrolling');
+                
+                scrollTimeout = setTimeout(() => {
+                    this.classList.remove('is-scrolling');
+                }, 150);
+            });
+        }
+        
+        // Prevenir zoom em inputs no iOS quando focados
+        if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            const inputs = document.querySelectorAll('input[type="text"], input[type="date"], input[type="month"]');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    const currentSize = window.getComputedStyle(this).fontSize;
+                    if (parseFloat(currentSize) < 16) {
+                        this.style.fontSize = '16px';
+                    }
+                });
+            });
+        }
+        
+        // Otimizar gráfico para mobile
+        if (window.innerWidth <= 768) {
+            const chartWrapper = document.querySelector('.chart-wrapper');
+            if (chartWrapper) {
+                chartWrapper.style.height = '250px';
+            }
+        }
+    }
+    
+    // Recarregar melhorias mobile quando redimensionar
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(function() {
+            if (window.innerWidth <= 768) {
+                inicializarMobile();
+            }
+        }, 250);
+    });
     
     // INJETAR TABS DINAMICAMENTE (SOLUÇÃO PARA CACHE)
     function injetarTabsSeNecessario() {
